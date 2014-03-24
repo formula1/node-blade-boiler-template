@@ -1,0 +1,32 @@
+.row
+    .span3
+        form#form_login_user.auth-at-dropdown(method="post" action="/user/login")
+            fieldset
+                input(type='hidden', name='_csrf', value=csrf_token)
+                .control-group
+                    .controls
+                        .input-prepend
+                            .add-on
+                                i.icon-envelope
+                            input.input-xlarge.focused.required.login(id="email" name="email" type="text" value="" placeholder='#{t("ns.forms:ph.email")}')
+                .control-group
+                    .controls
+                        .input-prepend
+                            .add-on
+                                i.icon-key
+                            input.input-xlarge.focused.required.login(id="password" name="password" type="password" value="" placeholder='#{t("ns.forms:ph.password")}')
+                .control-group.row-fluid
+                    label.checkbox.span7
+                        input#remember_me(name="remember_me" value="off" type="checkbox" unchecked="yes")
+                        span=t("ns.forms:button.remember-me")
+                    .span5
+                        button#login.btn.btn-block.btn-primary.btn-small.btn-login(type="submit")=t("ns.forms:button.login")
+                        button#continue.login.btn.btn-block.btn-primary.btn-small.btn-continue.hidden(type="submit")=t("ns.forms:button.continue")
+                .control-group.row-fluid
+                    #passreq.hide=t("ns.msg:error.passreq")
+                    #emailreq.hide=t("ns.msg:error.emailreq")
+                    #emailvalid.hide=t("ns.msg:error.emailvalid")
+                    #passlength.hide=t("ns.msg:error.passlength")
+
+                    label.error.text-info(for="email")
+                    label.error.text-success(for="password")

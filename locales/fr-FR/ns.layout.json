@@ -1,0 +1,18 @@
+{
+  "search": {
+    "advanced": "Avancé"
+    ,"search": "Recherche"
+  },
+  "user": {
+    "gravatar": "Gravatar"
+    ,"profile": "Profile"
+    ,"login": "Se Connecter"
+    ,"logout": "Déconnexion"
+    ,"contact": "Contact"
+    ,"help": "Aide"
+  },
+  "footer": {
+    "language": "Langues"
+    ,"search": "Recherche"
+  }
+}

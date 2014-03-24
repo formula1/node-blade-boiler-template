@@ -1,0 +1,24 @@
+footer
+    .navbar.navbar-fixed-bottom
+        .navbar-inner
+            button.btn.btn-navbar.collapsed(type="button" data-toggle="collapse" data-target="#footer-nav-collapse")
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            #footer-nav-collapse.nav-collapse.collapse
+                // Langauages select menu
+                ul.nav.pull-right
+                    li.divider-vertical
+                    li.dropdown
+                        a.dropdown-toggle(href="#" role="button" data-toggle="dropdown")
+                            span.icon-flag
+                            span=t("ns.layout:footer.language")
+                            b.caret
+                        .dropdown-menu.well.pull-right
+                            - var langFile = locals.settings.languages
+                            #language-menu
+                                ul
+                                    - for(var i in langFile)
+                                        - var o = langFile[i]
+                                        li
+                                            a(id=""+i data-i18n="language."+i)=o

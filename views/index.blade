@@ -1,0 +1,10 @@
+include "../layout/layout.blade"
+replace block page
+	input(type='hidden', name='_csrf', value=csrf_token)
+	.row
+		h3=message
+		.span6
+			#welcome
+				p="main"
+		.span6
+			p="right"

@@ -1,0 +1,42 @@
+{
+  "cs": {
+    "locale": "cs",
+    "code": "cs-CZ"
+  },
+  "de": {
+    "locale": "de",
+    "code": "de-DE"
+  },
+  "en": {
+    "locale": "en",
+    "code": "en-UK"
+  },
+  "fr": {
+    "locale": "fr",
+    "code": "fr-FR"
+  },
+  "jp": {
+    "locale": "ja",
+    "code": "ja-JP"
+  },
+  "pt": {
+    "locale": "pt",
+    "code": "pt-BR"
+  },
+  "sr": {
+    "locale": "sr",
+    "code": "sr-RS"
+  },
+  "ru": {
+    "locale": "ru",
+    "code": "ru-RU"
+  },
+  "sk": {
+    "locale": "sk",
+    "code": "sk-SK"
+  },
+  "us": {
+    "locale": "us",
+    "code": "en-US"
+  }
+}

@@ -1,0 +1,44 @@
+header
+    .navbar.navbar-fixed-top
+        .navbar-inner
+            button.btn.btn-navbar.collapsed(type="button" data-toggle="collapse" data-target="#navbar-nav-collapse")
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            a(href="/" class="brand")
+                img(src="/images/logo.gif" class="logo")
+                //span(class="tzm-i18n")=t("tzm")
+            #navbar-nav-collapse.nav-collapse.collapse
+                //login / user menu
+                - if (!locals.user)
+                    ul.nav.pull-right(list-style-type="none")
+                        li.divider-vertical
+                            li.dropdown
+                                a.dropdown-toggle(href="#" role="button" data-toggle="dropdown")
+                                    span.icon-signin
+                                    span!=t("ns.layout:user.login")
+                                    b.caret
+                                .dropdown-menu.well.pull-right
+                                    span=t("ns.forms:button.federated-login")
+                                    include "forms/federated-form.blade"
+                                    span=t("ns.forms:button.login")
+                                    include "forms/login-form.blade"
+                - else
+                    ul.nav.pull-right(list-style-type="none")
+                        li.divider-vertical
+                            li.dropdown
+                                a.dropdown-toggle(href="#" role="button" data-toggle="dropdown")
+                                    span.icon-user
+                                    span!=t("ns.layout:footer.profile")
+                                    b.caret
+                                .dropdown-menu.well.pull-right(background-color="gray")
+                                    input(type='hidden', name='user', value=user.name)
+                                    b.pull-right=user.name +" "+ user.surname                                    
+                                    br
+                                    include "forms/profile-form.blade"
+            form.navbar-search.pull-right(method="post" action="#")
+                .input-prepend
+                    input.search-query(placeholder="#{t('ns.layout:footer.search')}" type="text")
+                    input(class="button submit-button" value="#{t('ns.layout:footer.search')}" type="submit")
+
+

@@ -1,0 +1,31 @@
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# Windows
+Thumbs.db
+
+# Vim
+.*.sw[a-z]
+*.un~i
+tags
+
+# OsX
+.DS_Store
+#Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# local
+node_modules
+builtAssets
+npm-shrinkwrap.json
+public/js/map2.js
+.app
+server.old.js
+npm-debug.log
+.idea
+uploads
+locales/translations
+#data/chapters.json
