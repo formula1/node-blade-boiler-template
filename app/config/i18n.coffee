@@ -5,4 +5,4 @@ module.exports =
     resSetPath: "./locales/__lng__/new.__ns__.json"
     ignoreRoutes: ["images/", "public/", "css/"]
     extension:".json"
-    debug: false
+    debug: true

@@ -1,5 +1,5 @@
 {
-  "author": "Norman Khine <norman@zmgc.net> (http://zmgc.net)",
+  "author": "Norman Khine <norman@khine.net> (http://khine.net)",
   "name": "node-express-blade",
   "description": "Node.js, Express, Node-Blade and Mongodb boiler tempplate",
   "private": false,
@@ -9,7 +9,7 @@
   "readmeFilename": "README.md",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/nkhine/node-blade-boiler-template"
   },
   "subdomain": "node-express-blade",
   "engines": {
@@ -116,7 +116,7 @@
     "Boiler Template"
   ],
   "bugs": {
-    "url": "https://github.com/TZM/tzm-blade/issues",
-    "email": "bugs@zmgc.net"
+    "url": "https://github.com/nkhine/node-blade-boiler-template/issues",
+    "email": "bugs@khine.net"
   }
 }

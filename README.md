@@ -1,5 +1,5 @@
 
-#TZM Chapters code :: 
+#Node.js Boiler template code :: 
 [![Build Status][1]][2] [![Dependency Status][3]][4] [![Bitdeli Badge][15]][16]
 
 [![Browser Support][17]][18]
@@ -37,8 +37,8 @@ Here is a list, that is currently used add these to your .zschrc or .bashrc :
 #Installation
 After installing node.js, open terminal and navigate to your sandboxes folder
 
-    ☺ git clone git://github.com/TZM/tzm-blade.git
-    ☺ cd tzm-blade
+    ☺ git clone https://github.com/nkhine/node-blade-boiler-template.git
+    ☺ cd node-blade-boiler-template
     ☺ npm install
 
     npm http GET https://registry.npmjs.org/express

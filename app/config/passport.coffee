@@ -66,7 +66,7 @@ if process.env.FB_APP_ID? and  process.env.FB_APP_SEC?
         for mail in profile.emails
           emails.push mail.value
         console.log "arguments in facebook strategy"
-        console.log arguments
+        console.log profile
         User.findOneAndUpdate(
           "email":
             $in: emails
@@ -111,7 +111,7 @@ passport.use(new GoogleStrategy
 , (token, profile, done) ->
   console.log "arguments in google strategy"
   console.log profile.emails
-  console.log arguments
+  console.log profile
   emails = []
   for mail in profile.emails
     emails.push mail.value
@@ -165,7 +165,7 @@ passport.use(new GoogleStrategy
 #     callbackURL: url + "/social/twittercallback"
 #   , (token, tokenSecret, profile, done) ->
 #     console.log("arguments in twitter strategy");
-#     console.log arguments
+#     console.log profile
 #     displayName = profile.displayName.split(" ")
 #     User.findOneAndUpdate(
 #       "uid": profile.id
@@ -211,7 +211,7 @@ if process.env.GITHUB_ID? and process.env.GITHUB_SEC?
   , (accessToken, refreshToken, profile, done) ->
     console.log "arguments in github strategy"
     console.log("profile.emails", profile.emails)
-    console.log arguments
+    console.log profile
     emails = []
     for mail in profile.emails
       emails.push mail.value if mail.value?
@@ -265,7 +265,7 @@ if process.env.GITHUB_ID? and process.env.GITHUB_SEC?
       "provider": profile.provider
     , (err, user) ->
       console.log "user arguments at github strategy"
-      console.log arguments
+      console.log profile
       console.log("email at passport callback:", profile.emails)
       if err? then return done err, null,
         message: "authorizationfailed",
@@ -319,7 +319,7 @@ if process.env.LI_APP_ID? and process.env.LI_APP_SEC?
     profileFields: ["id", "first-name", "last-name", "email-address", "headline"]
   , (accessToken, refreshToken, profile, done) ->
     console.log "arguments in linkedin strategy"
-    console.log arguments
+    console.log profile
     console.log profile.emails
     emails = []
     for mail in profile.emails
@@ -374,7 +374,7 @@ passport.use(new YahooStrategy
     emails.push mail.value
   console.log "arguments in yahoo strategy"
   console.log profile.emails
-  console.log arguments
+  console.log profile
   displayName = profile.displayName.split(" ")
   User.findOneAndUpdate(
     "emails": {$in: emails}
@@ -417,7 +417,7 @@ passport.use(new PersonaStrategy
   audience: url
 , (email, done) ->
   # console.log "arguments in persona strategy"
-  # console.log arguments
+  # console.log profile
   process.nextTick ->
     User.findOneAndUpdate(
       "email": email

@@ -48,6 +48,8 @@ routeMvc = (controllerName, methodName, req, res, next) ->
   #res.header "Access-Control-Allow-Methods", "GET,POST"
   controllerName = "index" if not controllerName?
   controller = null
+  controllerName = "js" if not controllerName?
+  controller = null
   try
     controller = require "../controllers/" + controllerName
   catch e

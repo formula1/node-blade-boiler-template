@@ -21,11 +21,11 @@ Please replace `languageCode-countryCode` with the ones for your language and co
 
 	☺ cp -r locales/dev locales/languageCode-countryCode
 	☺ subl locales/languageCode-countryCode
-See the wiki for further details [https://github.com/TZM/tzm-blade/wiki/Localization-and-Intrenationalization-of-ZMGC-application][9]
+
 
 ## TODO
 - `[ ]` [http://www.languageicon.org/][10] - use the language icon.
-- `[ ]` Integrate [WebTranslate][11] into the [application][12]
+- `[ ]` Integrate [WebTranslate][11] into the application
 
 [1]: http://en.wikipedia.org/wiki/IETF_language_tag
 [2]: https://developer.mozilla.org/en-US/docs/Web_Localizability/Creating_localizable_web_applications
@@ -38,4 +38,3 @@ See the wiki for further details [https://github.com/TZM/tzm-blade/wiki/Localiza
 [9]: https://github.com/TZM/tzm-blade/wiki/Localization-and-Intrenationalization-of-ZMGC-application
 [10]: http://www.languageicon.org/
 [11]: https://github.com/jamuhl/i18next-webtranslate
-[12]: https://github.com/TZM/tzm-blade/issues/50

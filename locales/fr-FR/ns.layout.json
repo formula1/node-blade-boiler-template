@@ -1,7 +1,13 @@
 {
+  "menu": {
+    "projects": "Projets"
+    ,"map": "Carte"
+    ,"calendar": "Événements"
+    ,"forums": "Forums"
+  },
   "search": {
-    "advanced": "Avancé"
-    ,"search": "Recherche"
+  "advanced": "Avancé"
+  ,"search": "Recherche"
   },
   "user": {
     "gravatar": "Gravatar"
@@ -13,6 +19,7 @@
   },
   "footer": {
     "language": "Langues"
+    ,"network": "TZM Reseaux"
     ,"search": "Recherche"
   }
 }
