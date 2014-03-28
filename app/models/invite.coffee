@@ -24,7 +24,7 @@ inviteSchema.methods.send = ()->
       email: @email
       name: @name
       surname: @surname
-    subject: "Invite from ZMGC"
+    subject: "Invite from Continental Clothing"
     template: "invite"
   Emailer = require "../utils/emailer"
   emailer = new Emailer options, @

@@ -81,7 +81,6 @@ UserSchema = new Schema(
   tokenExpires:
     type: Number
 
-
   provider:
     type: Array
     enum: ["facebook", "google", "yahoo", "local", "github", "persona", "linkedin", "twitter"]
@@ -259,7 +258,7 @@ UserSchema.statics.register = (user, cb) ->
   #      ## email user
   #      #options =
   #      #  template: "validation"
-  #      #  from: "Global Chapter Administration <gca@zmgc.net>"
+  #      #  from: "Administration <gca@continentalclothing.com>"
   #      #  subject: "Email validation"
   #      #
   #      #data =

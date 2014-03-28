@@ -22,15 +22,15 @@ class Emailer
   attachments: [
     fileName: "logo.png"
     filePath: "./public/images/email/logo.png"
-    cid: "logo@zmgc.net"
+    cid: "logo@continentalclothing.com"
   ]
 
   constructor: (@options, @data)->
 
   send: (callback)->
     # console.log @data
-    html = "follow this link: <a href=#{@data.link}>#{@data.link}</a><br> to reset your password<img class='cid:logo@zmgc.net'></img>" if @options.template is 'reset'
-    html = "follow this link: <a href=#{@data.link}>#{@data.link}</a><br> to verify your email anddress and create account<br><img class='cid:logo@zmgc.net'></img>" if @options.template is "activation"
+    html = "follow this link: <a href=#{@data.link}>#{@data.link}</a><br> to reset your password<img class='cid:logo@continentalclothing.com'></img>" if @options.template is 'reset'
+    html = "follow this link: <a href=#{@data.link}>#{@data.link}</a><br> to verify your email anddress and create account<br><img class='cid:logo@continentalclothing.com'></img>" if @options.template is "activation"
 
     #FIXME doesnt work getHtml() cannot put @data to template, unexpected token '=' at (<h3><%= pass %></h3>)
     #html = @getHtml(@options.template, @data)
@@ -38,7 +38,7 @@ class Emailer
     attachments = @getAttachments(html)
     messageData =
       to: "'#{@options.to.name} #{@options.to.surname}' <#{@options.to.email}>"
-      from: "'ZMGC.NET'"
+      from: "'continentalclothing.com'"
       subject: @options.subject
       html: html
       generateTextFromHTML: true
