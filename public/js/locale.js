@@ -12,7 +12,7 @@ jQuery(function($) {
             language_complete = navigator.language;
         }
 
-        language = (language_complete[0]);
+        language = (language_complete);
     }
  
     $("#remember_me").click(function(e) {
@@ -154,15 +154,7 @@ jQuery(function($) {
     })  
     function setLanguage() {
         // save to use translation function as resources are fetched
-        $("title").i18n();
-        $(".welcome").i18n();
-        $("#nav-container").i18n();
-        $(".project-select").i18n();
-        $(".menu").i18n();
-        $(".user-menu").i18n();
-        $(".sub-section").i18n();
-        $("#remember_me").i18n()
-        $("#footer").i18n();
+        $("body").i18n();
         $("#language-menu").hide();
     }
 
@@ -175,7 +167,6 @@ jQuery(function($) {
         var windowReload = false; // TRUE = reload the page; FALSE = do not reload the page
         var $this = $(this);
         var language = $this.attr("id");
-
         if (windowReload) {
             window.location.href = "/?lang=" + language;
         } else {
@@ -183,7 +174,7 @@ jQuery(function($) {
             i18n.setLng(language, location.reload());
             i18n.init({
                 lng:language
-                ,debug:true
+                ,debug:false
             }, setLanguage);
         }
 

@@ -5,3 +5,4 @@ module.exports =
     ns: { namespaces: ['ns.common', 'ns.layout', 'ns.forms', 'ns.msg'], defaultNs: 'ns.common'}
     ignoreRoutes: ["images/", "public/", "css/"]
     extension:".json"
+    debug: false

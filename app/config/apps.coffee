@@ -96,8 +96,6 @@ module.exports = (app) ->
   app.configure ->
     try
       require ("./passport.coffee")
-      #app.set "translation", require(process.cwd() + "/locales/dev/translation.json")
-      #app.set "chapters", require(process.cwd() + "/data/chapters.json")
       fs.readdir "./locales", (err,locales) ->
         EXCLUDE = [ "dev", "README.md", "config.json", "translations" ]
         languages = []
@@ -126,7 +124,8 @@ module.exports = (app) ->
   multipleRedisSessions = require("connect-multi-redis")(app, express.session)
   # Set sessions and middleware
   app.configure ->
-    @use(express.urlencoded())
+    @use(i18n.handle)
+    .use(express.urlencoded())
     #.use(cors)
     .use(express.json())
     .use(express.methodOverride())
@@ -142,7 +141,6 @@ module.exports = (app) ->
     @use(express.session(options))
     .use(passport.initialize())
     .use(passport.session())
-    .use(i18n.handle)
     .use(blade.middleware(process.cwd() + "/views"))
     .use(express.csrf())
     #Configure dynamic helpers

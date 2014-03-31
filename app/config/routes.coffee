@@ -1,5 +1,5 @@
 #### Routes
-# We are setting up theese routes:
+# We are setting up these routes:
 #
 # GET, POST, PUT, DELETE methods are going to the same controller methods - we dont care.
 # We are using method names to determine controller actions for clearness.
@@ -19,6 +19,8 @@ module.exports = (app) ->
   app.all "/:controller", (req, res, next) ->
     routeMvc(req.params.controller, "index", req, res, next)
   #   - _/**:controller**/**:method**_ -> controllers/***:controller***/***:method*** method
+  app.all /\controller?\/(locales|js|translation)/, (req, res, next) ->
+    routeJSON(req, res, next)
   app.all "/:controller/:method", (req, res, next) ->
     routeMvc(req.params.controller, req.params.method, req, res, next)
   #   - _/**:controller**/**:method**/**:id**_ -> controllers/***:controller***/***:method*** method with ***:id*** param passed
@@ -60,3 +62,8 @@ routeMvc = (controllerName, methodName, req, res, next) ->
   else
     console.warn "method not found: " + methodName
     next()
+
+# render the locale json and js
+routeJSON = (req, res, next) ->
+  console.log "XXX"
+  next()
