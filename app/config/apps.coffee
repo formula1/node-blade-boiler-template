@@ -70,7 +70,7 @@ module.exports = (app) ->
 
   app.configure ->
     app.use assets(build : false)
-    @use(express.favicon(process.cwd() + "/assets/images/favicon.ico", {maxAge:maxAges}))
+    .use(express.favicon(process.cwd() + "/assets/images/favicon.ico", {maxAge:maxAges}))
     .use(express.compress())
     .use(device.capture())
     .use(express.static(process.cwd() + "/assets", {maxAge:maxAges}))

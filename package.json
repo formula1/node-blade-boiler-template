@@ -36,7 +36,7 @@
     "wrench": "~1.5.4",
     "which": "~1.0.5",
     "supervisor": "~0.5.2",
-    "connect-assets": "~3.0.0-beta2",
+    "connect-assets": "2.5.5",
     "less": "~1.7.0",
     "stylus": ">=0.42.3",
     "winston": "~0.7.3",
