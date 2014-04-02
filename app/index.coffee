@@ -36,7 +36,7 @@ logger.info "--- Server running on port: " + app.port, logCategory
 #Connect to database
 dbconnection = require "./utils/dbconnect"
 
-dbconnection.init (result) ->
+dbconnection.init (err, result) ->
   if result
     logger.info "Database initialized: " + result, logCategory
 #Exports

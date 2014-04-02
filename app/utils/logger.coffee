@@ -75,9 +75,15 @@ _.each levels, (i, k) ->
     # prepend the category, if defined
     if typeof (meta) is "string"
       logCat = meta
-      meta = `undefined`
+      meta = 'undefined'
     else if meta and meta.cat
       logCat = meta.cat
       delete meta.cat
     msg = "[" + logCat + "] " + msg
-    wLogger[k].call wLogger, msg, meta, callback
+    if typeof (callback) is "undefined" && ( typeof (meta) == "undefined" || meta == "undefined" )
+      wLogger[k].call wLogger, msg
+    else if typeof (callback) is "undefined"
+      wLogger[k].call wLogger, msg, meta
+    else
+      wLogger[k].call wLogger, msg, meta, callback
+
