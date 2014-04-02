@@ -1,7 +1,6 @@
 express = require "express"
 csrf = express.csrf()
 assets = require "connect-assets"
-jsPaths = require "connect-assets-jspaths"
 flash = require "connect-flash"
 RedisStore = require("connect-redis")(express)
 blade = require "blade"
@@ -34,7 +33,7 @@ redisService =  process.env.REDISTOGO_URL || process.env.REDISCLOUD_URL
 rediska = (if redisService? then require("redis-url").connect(redisService) else require("redis").createClient())
 
 options =
-  key: "ccc-connect.sid"
+  key: "blade-connect.sid"
   secret: "f2e5a67d388ff2090dj7Q2nC53pF"
   cookie:
     maxAge: 86400000 * 1 # 30 days
@@ -71,8 +70,7 @@ module.exports = (app) ->
 
   app.configure ->
     app.use assets(build : false)
-    jsPaths assets, console.log
-    @use(express.favicon(process.cwd() + "/assets/images/favicon.ico", {maxAge:maxAges}))
+    .use(express.favicon(process.cwd() + "/assets/images/favicon.ico", {maxAge:maxAges}))
     .use(express.compress())
     .use(device.capture())
     .use(express.static(process.cwd() + "/assets", {maxAge:maxAges}))
@@ -132,7 +130,7 @@ module.exports = (app) ->
     .use(express.cookieParser("90dj7Q2nC53pFj2b0fa81a3f663fd64"))
     .use(multipleRedisSessions(options))
 
-    options.key = "ccc-connect.sid"
+    options.key = "blade-connect.sid"
     options.store = options.hosts[0]
     options.cookie.maxAge = 86400000 * 30 #90 days
 
