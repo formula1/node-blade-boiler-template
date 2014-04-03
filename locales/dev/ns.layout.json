@@ -1,12 +1,5 @@
 {
-  "menu": {
-    "projects": "Projects"
-    ,"map": "Map"
-    ,"calendar": "Calendar"
-    ,"forums": "Forums"
-    ,"guide": "Guide"
-  }
-  ,"search": {
+  "search": {
     "advanced": "Advanced"
     ,"search": "Search"
   }

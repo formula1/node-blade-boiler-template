@@ -1,19 +1,18 @@
 User = require "../models/user/user"
 sanitize = require("validator").sanitize
 validator = require("../utils/validation").validator()
-config = require("../config/config")
-validation = require("../utils/validation")
+config = require "../config/config"
+validation = require "../utils/validation"
 messages = require "../utils/messages"
-Emailer = require ("../utils/emailer")
-passport = require("passport")
-async = require('async')
-formidable = require 'formidable'
-fs = require 'fs'
+Emailer = require "../utils/emailer"
+passport = require "passport"
+async = require "async"
+formidable = require "formidable"
+fs = require "fs"
 logger = require "../utils/logger"
 logCat = "USER controller"
 validationEmail = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
-csv = require 'fast-csv'
-
+csv = require "fast-csv"
 
 # User model's CRUD controller.
 Route =
@@ -63,7 +62,7 @@ Route =
                   email: user.email
               #check if user is already active then reset password if not then send activation link again
               if user.active is true
-                console.log("user exist and activeted")
+                #user exist and activeted")
                 action = '/user/resetpassword/'
               else
                 console.log("user exist but not activated")

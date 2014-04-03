@@ -5,7 +5,7 @@ console.log boundServices
 DB_HOSTNAME = "localhost"
 DB_HOST = "127.0.0.1"
 MONGO_DB_PORT = 27017
-MONGO_DB_NAME = "zmgc-mongo"
+MONGO_DB_NAME = "ccc-mongo"
 MONGO_DB_URL = null
 MONGO_DB_USER = null
 MONGO_DB_PASS = null
@@ -44,7 +44,7 @@ module.exports =
         hostname: "localhost"
         host: "127.0.0.1"
         port: 6379
-        name: "zmgc-redis"
+        name: "ccc-redis"
         password: null
         maxAge: 86400000 * 30
     
