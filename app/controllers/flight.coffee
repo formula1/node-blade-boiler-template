@@ -79,7 +79,7 @@ parse_row = (data, callback)->
   cpy = 0
   addrss = 0
   usr = 0
-  error = false
+  error = false # I should check if topic even exsists before I start
   FMs.topic.findOne {topic_id:data.topic_id}, (err, topic_a) ->
     if err
       results.rejected++
@@ -139,7 +139,7 @@ parse_row = (data, callback)->
               else
                 saved = new FMs.region {name: temp, level: regions.length, parent:parent}
                 if(parent != null)
-                  parent.children.push saved._id
+                  parent.children.push saved._id #this doesn't work as the id isn't set yet
                   saved.parent = parent._id
                   parent.save (err) ->
                     if err

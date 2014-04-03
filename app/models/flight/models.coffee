@@ -47,6 +47,9 @@ FlightCompany = new Schema(
   name:
     type: String
     unique: true
+  url: 
+    type: String
+    required: false
   logo_url:
     type: String
     required: false
@@ -58,6 +61,16 @@ FlightCompany = new Schema(
 
 Address = new Schema(
   address: String
+  post_code: String
+  telephone_num:
+    type: Number
+    required:false
+  fax_num: 
+    type: String
+    required: false
+  email: 
+    type: String
+    required: false
   company: Schema.Types.ObjectId
   region: Schema.Types.ObjectId
   user: [Schema.Types.ObjectId]
