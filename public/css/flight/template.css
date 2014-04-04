@@ -1,0 +1,5 @@
+ul.horizontal>li{display:inline-block;list-style-type:none}
+ul.vertical>li{display:block;list-style-type:none}
+
+.flight_main{display:inline-block;width:80%;}
+.flight_sidebar{display:inline-block;width:20%;}

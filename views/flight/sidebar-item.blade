@@ -1,0 +1,8 @@
+div.accordian-group.sidebar_item
+    block sidebar_title(title)
+        -var nw = title.replace(/ /g,'')
+        div.accordian-heading
+            a.accordian-toggle(data-toggle="collapse", data-parent="flight_sidebar", href="#collapse_"+nw)= title
+        div.accordian-body.collapse.in(id="collapse_"+nw)
+            div.accordian-inner
+                block sidebar_content

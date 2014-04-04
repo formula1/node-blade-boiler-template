@@ -1,20 +1,15 @@
-#
-# User model
-# Ideas from http://blog.mongodb.org/post/32866457221/password-authentication-with-mongoose-part-1
-# and http://devsmash.com/blog/implementing-max-login-attempts-with-mongoose
-#
-mongoose = require('mongoose');
-Schema = mongoose.Schema;
+mongoose = require('mongoose')
+Schema = mongoose.Schema
 
 Topic = new Schema(
-  topic_id: 
+  topic_id:
     type: String
     unique: true
   name:
     type: String
     unique: true
-  companies: [Schema.Types.ObjectId]
-);
+  companies: [{type: Schema.Types.ObjectId, ref:"flight_company"}]
+)
 
 License = new Schema(
   abr:
@@ -26,72 +21,75 @@ License = new Schema(
   full_name:
     type: String
     unique: true
-  companies: [Schema.Types.ObjectId]
+  companies: [{type: Schema.Types.ObjectId, ref:"flight_company"}]
 )
 
 Region = new Schema(
-  name: 
+  name:
     type: String
     required: true
   level:
     type: Number
     required: true
-  parent: 
+  parent:
     type: Schema.Types.ObjectId
+    ref: "flight_region"
     required: false
-  children: [Schema.Types.ObjectId]
-  addresses: [Schema.Types.ObjectId]
+  children: [{type: Schema.Types.ObjectId, ref:"flight_region"]
+  addresses: [{type: Schema.Types.ObjectId, ref:"flight_address"}]
 )
 
 FlightCompany = new Schema(
   name:
     type: String
     unique: true
-  url: 
+  url:
     type: String
     required: false
   logo_url:
     type: String
     required: false
   topic: Schema.Types.ObjectId
-  license: [Schema.Types.ObjectId]
-  address: [Schema.Types.ObjectId]
-  user: [Schema.Types.ObjectId]
-);
+  license: [{type: Schema.Types.ObjectId, ref:"flight_license"}]
+  addresses: [{type: Schema.Types.ObjectId, ref:"flight_address"}]
+  user: [{type: Schema.Types.ObjectId, ref: "flight_user"}]
+)
 
 Address = new Schema(
   address: String
   post_code: String
-  telephone_num:
+  telephone_number:
     type: Number
     required:false
-  fax_num: 
+  fax_number:
     type: String
     required: false
-  email: 
+  email:
     type: String
     required: false
-  company: Schema.Types.ObjectId
-  region: Schema.Types.ObjectId
-  user: [Schema.Types.ObjectId]
-);
+  company: {type: Schema.Types.ObjectId, ref:"flight_company"}
+  region: {type: Schema.Types.ObjectId, ref:"flight_region"}
+  user: [{type: Schema.Types.ObjectId, ref:"flight_user"}]
+)
 
 User = new Schema(
-  company: 
+  company:
     type: Schema.Types.ObjectId
+    ref: "flight_company"
     required: true
-  address: 
+  address:
     type: Schema.Types.ObjectId
+    ref: "flight_region"
     required: true
   info:
     type: Schema.Types.ObjectId
-	  required: false
+    required: false
 )
 
 module.exports =
-  topic : mongoose.model "flight_topic" Topic
-  license : mongoose.model "flight_license" License
-  company : mongoose.model "flight_company" FlightCompany
-  address : mongoose.model "flight_address" Address
-  region : mongoose.model "flight_region" Region
-  user : mongoose.model "flight_user" User
+  topic : mongoose.model "flight_topic", Topic
+  license : mongoose.model "flight_license", License
+  company : mongoose.model "flight_company", FlightCompany
+  address : mongoose.model "flight_address", Address
+  region : mongoose.model "flight_region", Region
+  user : mongoose.model "flight_user", User

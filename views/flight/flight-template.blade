@@ -1,0 +1,27 @@
+include "../../layout/layout.blade"
+replace block page_head
+    link( rel="stylesheet" href="/css/flight/template.css")
+replace block page
+    -if(locals.company_id)
+        ul.flight_menu.horizontal
+            li
+                a(href='/flight/') Home
+            li
+                a(href='/flight/'+locals.company_id) Company Overview
+            li
+                a(href='/flight/'+locals.company_id+'address') Addresses
+            li
+                a(href='/flight/'+locals.company_id+'/users') Users
+            li
+                a(href='/flight/'+locals.company_id+'/orders') Orders
+    div.row-fluid
+        div.flight_main.span8
+            -var view = locals.view+".blade"
+            include view exposing locals
+        script(type='text/javascript', src='/js/vendor/engine.io.js')
+        script(type='text/javascript', src='/js/socket-handler.js')
+        -if(locals.user.groups == "admin")
+            div.flight_sidebar.span4.accordian#flight_sidebar
+                //-include "chat.blade"
+                include "uploads.blade" exposing locals
+    script(type='text/javascript', src='/js/flight/flight-template.js')
