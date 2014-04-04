@@ -32,6 +32,7 @@ else
   else
 
     init = require("./index")()
+    engine.use init
     port = init.port
     server = init.listen(port)
     engine.attach server

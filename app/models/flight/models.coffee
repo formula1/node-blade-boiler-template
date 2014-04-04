@@ -35,7 +35,7 @@ Region = new Schema(
     type: Schema.Types.ObjectId
     ref: "flight_region"
     required: false
-  children: [{type: Schema.Types.ObjectId, ref:"flight_region"]
+  children: [{type: Schema.Types.ObjectId, ref:"flight_region"}]
   addresses: [{type: Schema.Types.ObjectId, ref:"flight_address"}]
 )
 

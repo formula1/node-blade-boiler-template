@@ -64,6 +64,8 @@ else
   )]
 
 module.exports = (app) ->
+  i18n.init(config.I18N)
+  i18n.registerAppHelper(app)
   logger.info "Configure expressjs", logCategory
   # FIXME use _.each to loop for each dirs and Gzip
   #dirs = ["/assets", "/public", "/locales", "/data/topo"]

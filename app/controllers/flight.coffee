@@ -6,7 +6,9 @@ engine = require '../config/engine'
 
 
 
-engine.on 'join:/flight/index', (socket) ->
+engine.on 'join:/flight', (socket) ->
+  console.log("are we here?")
+  throw new Error("stopping point")
   return unless socket.user?.groups is 'admin'
   user2socket[socket.user.name] = socket
   user2socket[socket.user.name].on "close", ()->
@@ -295,6 +297,7 @@ Route =
         user : req.user
         companies : companies
         uploads : user2files[req.user.name]
+        token: req.csrfToken()
   upload: (req, res)->
     if req.method is 'POST'
       if !req.user || req.user.groups isnt 'admin'

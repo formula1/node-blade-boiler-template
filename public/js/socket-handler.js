@@ -13,7 +13,7 @@ jQuery(function($){
   sAHClass = function(){
     console.log("SAH construct");
     this.apps = {};
-    this.socket = new eio.Socket();
+    this.socket = new eio.Socket(document.URL);
     this.openboo = false;
     that = this;
     socket = this.socket;
@@ -24,28 +24,29 @@ jQuery(function($){
         setTimeout(function(){
           this.apps[an].onOpen(socket);
         }, 1);
-    });
-    this.socket.on('message', function(data) {
-      console.log('message received');
-      try {
-        var parsed = JSON.parse(data);
-        for(var name in this.apps)
-          if(name = parsed.app){
-            this.apps[name].trigger(parsed.data);
-            break;
-          }
-      }
-      catch(e) {
-        console.log('error', e.message);
-      }
-    });
-    this.socket.on('close', function() {
-      console.log("close");
-      that.openboo = false;
-      for(var an in this.apps)
-        setTimeout(function(){
-          this.apps[an].onClose(socket);
-        }, 1);
+      socket.on('message', function(data) {
+        console.log('message received');
+        try {
+          var parsed = JSON.parse(data);
+          for(var name in this.apps)
+            if(name = parsed.app){
+              this.apps[name].trigger(parsed.data);
+              break;
+            }
+        }
+        catch(e) {
+          console.log('error', e.message);
+        }
+      });
+      socket.on('close', function() {
+        console.log("close");
+        that.openboo = false;
+        for(var an in this.apps)
+          setTimeout(function(){
+            this.apps[an].onClose(socket);
+          }, 1);
+      });
+
     });
   };
   

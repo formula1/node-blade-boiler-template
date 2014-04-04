@@ -4,16 +4,18 @@ replace sidebar_content
     script(type='text/javascript', src='/js/uploads-generic.js')
     form#flight_csv_upload_form(method='post', action='/flight/upload?action=upload', enctype='multipart/form-data', role='form')
         div.form-group
+            input(type="hidden", name="_csrf", value=locals.token)
             label(for="csv_uploader") CSV File
             input.form-control#csv_uploader(name='file', type='file', required)
         button.btn.btn-default(type='submit') Upload
     div.uploads_container
-        div.uploader.alert.alert-danger Not Connected
-        -for(var i in locals.uploads)
-            div.upload_item(data-uploadid="#{localsuploads[i].name}")
-                h5= localsuploads[i].name
-                :nl2br
-                    #{uploads[i].total}/#{uploads[i].max} rows finished
-                    #{uploads[i].objects_per_row} objects per row
-                    #{uploads[i].duplicates} objects avoided duplication
-                    #{uploads[i].rejected} objects rejected
+        div.uploader.alert.alert-danger(data-toggle="tooltip", data-placement="left", title="You will not see live updates of the CSVs you upload") Not Connected
+        ul.vertical.uploads_lister
+            -for(var i in locals.uploads)
+                li.upload_item(data-uploadid="#{localsuploads[i].name}")
+                    h5= localsuploads[i].name
+                    :nl2br
+                        #{uploads[i].total}/#{uploads[i].max} rows finished
+                        #{uploads[i].objects_per_row} objects per row
+                        #{uploads[i].duplicates} objects avoided duplication
+                        #{uploads[i].rejected} objects rejected
