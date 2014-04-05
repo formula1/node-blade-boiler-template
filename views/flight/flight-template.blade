@@ -20,7 +20,7 @@ replace block page
             include view exposing locals
         script(type='text/javascript', src='/js/vendor/engine.io.js')
         //-script(type='text/javascript', src='/js/socket-handler.js')
-        -if(locals.user.groups == "admin")
+        -if(locals.user && locals.user.groups == "admin")
             div.flight_sidebar.span4.accordian#flight_sidebar
                 //-include "chat.blade"
                 include "uploads.blade" exposing locals

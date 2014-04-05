@@ -34,12 +34,14 @@ $('#flight_csv_upload_form :file').change(function(file){
     
     //Your validation
 });
-/*
+
 $("#flight_csv_upload_form").submit(function(e){
   e.preventDefault();
-  var formData = new FormData($('form')[0]);
+  var that = $(this);
+  var formData = new FormData($('#flight_csv_upload_form')[0]);
+  
   $.ajax({
-      url: '/flight/upload',  //Server script to process data
+      url: that.attr("action"),  //Server script to process data
       type: 'POST',
       xhr: function() {  // Custom XMLHttpRequest
           var myXhr = $.ajaxSettings.xhr();
@@ -67,17 +69,19 @@ $("#flight_csv_upload_form").submit(function(e){
           progress.show("fast");
         }
       },
-      success: function(e){
+      success: function(data){
         var progress = $('div.uploads-container .uploads_progress');
         progress.addClass("progress-bar-success");
         progress.children(".progress-bar").html("Success!");
         progress.delay(2000).hide("slow").remove();
+        $(".flight_main").replaceWith(data);
       },
       error: function(e){
         var progress = $('div.uploads-container .uploads_progress');
         progress.addClass("progress-bar-danger");
         progress.children(".progress-bar").html("We have an Error");
         progress.delay(2000).hide("slow").remove();
+        console.log(e);
       },
       // Form data
       data: formData,
@@ -88,5 +92,5 @@ $("#flight_csv_upload_form").submit(function(e){
   });
   return false;
 })
-*/
+
 });

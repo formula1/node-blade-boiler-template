@@ -29,6 +29,7 @@ class Emailer
 
   send: (callback)->
     # console.log @data
+    console.log "emailing"
     html = "follow this link: <a href=#{@data.link}>#{@data.link}</a><br> to reset your password<img class='cid:logo@continentalclothing.com'></img>" if @options.template is 'reset'
     html = "follow this link: <a href=#{@data.link}>#{@data.link}</a><br> to verify your email anddress and create account<br><img class='cid:logo@continentalclothing.com'></img>" if @options.template is "activation"
 

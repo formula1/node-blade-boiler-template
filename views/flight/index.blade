@@ -1,5 +1,5 @@
 -if(locals.companies.length == 0)
-    -if(locals.user.groups == "admin")
+    -if(locals.user && locals.user.groups == "admin")
         div.alert.alert-info To start looking at companies add a few or add them with the CSV Uploader
     -else
         div.alert.alert-info There is currently no companies to view
@@ -15,7 +15,7 @@
                     td # of Licenses
                     td # of Addresses
                     td # of Members
-                    -if(locals.user.groups == "admin")
+                    -if(locals.user && locals.user.groups == "admin")
                         td Action
             tbody
                 -for(var c in locals.companies)
@@ -27,11 +27,11 @@
                         td= locals.companies[c].topic.name
                         td= locals.companies[c].license.length
                         td= locals.companies[c].addresses.length
-                        td= locals.companies[c].user.length
+                        td= locals.companies[c].users.length
                         -if(locals.user.groups == "admin")
                             td
                                 a(href="flight/"+locals.companies[c].name+"/delete") Delete
-                -if(locals.user.groups == "admin")
+                -if(locals.user && locals.user.groups == "admin")
                     tr
                         form.form-inline(role="form" method="POST" action="flight/company/add")
                             td.form-group
