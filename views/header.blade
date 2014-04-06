@@ -8,6 +8,10 @@ header
             a(href="/" class="brand")
                 img(src="/images/nodejs-light.png" class="logo")
                 //span(class="tzm-i18n")=t("tzm")
+            - if (locals.messages.length)
+                .flashMessage
+                    .alert.alert-info
+                        =locals.messages.join(', ')
             #navbar-nav-collapse.nav-collapse.collapse
                 //login / user menu
                 - if (!locals.user)
