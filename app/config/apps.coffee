@@ -150,7 +150,7 @@ module.exports = (app) ->
         #for use in templates
         appName: config.APP.name
         #for connect-flash
-        message: req.flash("info")
+        messages: req.flash("info")
         # needed for csrf support
         csrf_token: req.csrfToken()
         #language
