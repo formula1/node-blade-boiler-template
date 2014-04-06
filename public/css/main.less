@@ -1,11 +1,11 @@
 ﻿@charset "utf-8";
-@import "/css/vendor/bootstrap/bootstrap.min.css";
-@import "/css/vendor/bootstrap/bootstrap-responsive.min.css";
-/* @import "/css/vendor/bootstrap/bootstrap-rtl.min.css"; */
-@import "/css/vendor/font-awesome.min.css";
-@import "/css/vendor/font-awesome-corp.css";
-@import "/css/vendor/font-awesome-social.css";
-@import "/css/vendor/famfam/cus-icons.css";
+@import (inline) "colormap.css";
+@import (inline) "vendor/bootstrap/bootstrap.min.css";
+@import (inline) "vendor/bootstrap/bootstrap-responsive.min.css";
+@import (inline) "vendor/font-awesome.min.css";
+@import (inline) "vendor/font-awesome-corp.css";
+@import (inline) "vendor/font-awesome-social.css";
+@import (inline) "vendor/famfam/cus-icons.css";
 
 
 
@@ -115,10 +115,9 @@ body {
 }
 
 @media print{
-	{text-shadow:none !important;} 
-body{overflow:visible !important;} 
-#header{display:none;} 
-#notification {display:none !important;}
+    body{overflow:visible !important;} 
+    #header{display:none;} 
+    #notification {display:none !important;}
 }
 
 .flashMessage {

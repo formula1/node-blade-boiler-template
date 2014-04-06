@@ -69,12 +69,13 @@ module.exports = (app) ->
   #dirs = ["/assets", "/public", "/locales", "/data/topo"]
 
   app.configure ->
-    app.use assets(build : false)
-    .use(express.favicon(process.cwd() + "/assets/images/favicon.ico", {maxAge:maxAges}))
+    app.use assets({ src : 'public'  })
+    .use(express.favicon(process.cwd() + "/public/images/favicon.ico", {maxAge:maxAges}))
     .use(express.compress())
     .use(device.capture())
-    .use(express.static(process.cwd() + "/assets", {maxAge:maxAges}))
     .use(express.static(process.cwd() + "/public", {maxAge:maxAges}))
+    .use('/font', express.static(process.cwd() + "/public/css/font", {maxAge:maxAges}))
+    .use('/fonts', express.static(process.cwd() + "/public/css/fonts", {maxAge:maxAges}))
     .use(express.static(process.cwd() + "/js", {maxAge:maxAges}))
     .use(express.static(process.cwd() + "/locales", {maxAge:maxAges}))
     .use(express.static(process.cwd() + "/data/topo", {maxAge:maxAges}))

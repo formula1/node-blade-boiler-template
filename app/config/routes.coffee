@@ -39,9 +39,8 @@ module.exports = (app) ->
   app.all "/*", (req, res) ->
     console.warn "error 404: ", req.url
     req.flash('info', '404!')
-    res.render '404',
-      status: 404
-      user: req.user
+    res.status(404)
+    res.render '404', { user: req.user }
 
 # render the page based on controller name, method and id
 routeMvc = (controllerName, methodName, req, res, next) ->
