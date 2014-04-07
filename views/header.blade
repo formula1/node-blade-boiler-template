@@ -1,48 +1,126 @@
 header
-    .navbar.navbar-fixed-top
-        .navbar-inner
-            button.btn.btn-navbar.collapsed(type="button" data-toggle="collapse" data-target="#navbar-nav-collapse")
-                span.icon-bar
-                span.icon-bar
-                span.icon-bar
-            a(href="/" class="brand")
-                img(src="/images/nodejs-light.png" class="logo")
-                //span(class="tzm-i18n")=t("tzm")
-            - if (locals.messages.length)
-                .flashMessage
-                    .alert.alert-info
-                        =locals.messages.join(', ')
-            #navbar-nav-collapse.nav-collapse.collapse
-                //login / user menu
-                - if (!locals.user)
-                    ul.nav.pull-right(list-style-type="none")
-                        li.divider-vertical
-                            li.dropdown
-                                a.dropdown-toggle(href="#" role="button" data-toggle="dropdown")
-                                    span.icon-signin
-                                    span!=t("ns.layout:user.login")
-                                    b.caret
-                                .dropdown-menu.well.pull-right
-                                    span=t("ns.forms:button.federated-login")
-                                    include "forms/federated-form.blade"
-                                    span=t("ns.forms:button.login")
-                                    include "forms/login-form.blade"
-                - else
-                    ul.nav.pull-right(list-style-type="none")
-                        li.divider-vertical
-                            li.dropdown
-                                a.dropdown-toggle(href="#" role="button" data-toggle="dropdown")
-                                    span.icon-user
-                                    span!=t("ns.layout:footer.profile")
-                                    b.caret
-                                .dropdown-menu.well.pull-right(background-color="gray")
-                                    input(type='hidden', name='user', value=user.name)
-                                    b.pull-right=user.name +" "+ user.surname                                    
-                                    br
-                                    include "forms/profile-form.blade"
-            form.navbar-search.pull-right(method="post" action="#")
-                .input-prepend
-                    input.search-query(placeholder="#{t('ns.layout:footer.search')}" type="text")
-                    input(class="button submit-button" value="#{t('ns.layout:footer.search')}" type="submit")
-
-
+    nav.top-bar.clearFix#utility(data-topbar)
+        ul.title-area#title
+            li.name#logoExtend
+                a(href="")
+            li.toggle-topbar.menu-icon
+                a(href="#") Menu
+                - if (locals.messages.length)
+                    .flashMessage
+                        .alert.alert-info
+                            =locals.messages.join(', ')
+        section.top-bar-section
+            - if (!locals.user)
+                ul.right
+                    li.divider
+                    li.section.clearFix
+                        a(href="#") Contact
+                    li.section.clearFix
+                        a(href="#") Resouces
+                    li.divider
+                        li.section.clearFix
+                            a(href="#") Your Account
+                        li.section.clearFix
+                            a(href="#") Sign Out
+                    li.divider
+                    li.section.clearFix
+                        a.signInSignUp(href="#") Login
+                    li.section.clearFix
+                        a.signInSignUp(href="#") Become a Customer
+                    li.divider
+                    li.section.clearFix
+                        a(href="#") En
+                    li.section.clearFix
+                        a(href="#") Fr
+                    li.section.clearFix
+                        a(href="#") Es
+                    li.section.clearFix
+                        a(href="#") It
+                    li.section.clearFix
+                        a(href="#") De
+            - else
+                ul.right
+                    li.divider
+                    li.section.clearFix
+                        a(href="#") Contact
+                    li.section.clearFix
+                        a(href="#") Resouces
+                    li.divider
+                    li.section.clearFix
+                        a(href="#") Your Account
+                    li.section.clearFix
+                        a(href="#") Sign Out
+                    li.divider
+                    li.section.clearFix
+                        a.signInSignUp(href="#") Login
+                    li.section.clearFix
+                        a.signInSignUp(href="#") Become a Customer
+                    li.divider
+                    li.section.clearFix
+                        a(href="#") En
+                    li.section.clearFix
+                        a(href="#") Fr
+                    li.section.clearFix
+                        a(href="#") Es
+                    li.section.clearFix
+                        a(href="#") It
+                    li.section.clearFix
+                        a(href="#") De
+    nav.top-bar#header.clearFix.skrollable.skrollable-between
+        ul.title-area#title
+            li.name#logoExtend
+                a(href="")
+                    img.logo(src="images/nodejs-light.png")
+            li.toggle-topbar.menu-icon
+                a(href="#") Menu
+                - if (locals.messages.length)
+                    .flashMessage
+                        .alert.alert-info
+                            =locals.messages.join(', ')
+        section.top-bar-section
+            - if (!locals.user)
+                ul.right
+                    li.divider
+                    li.has-dropdown.not-click
+                        a(href="#") COLLECTIONS
+                        ul.dropdown
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                    li.divider
+                    li.has-dropdown.not-click
+                        a(href="#") PRODUCTS
+                        ul.dropdown
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                    li.divider
+                    li
+                        a(href="#") ABOUT
+                    li.divider
+                    li
+                        a(href="#") Cart
+                    li.divider
+                    li
+                        a(href="#") Search
+            - else
+                ul.right
+                    li.divider
+                    li
+                        a(href="#") PRODUCTS
+                    li.divider
+                    li
+                        a(href="#") COLLECTIONS
+                    li.divider
+                    li
+                        a(href="#") ABOUT
+                    li.divider
+                    li
+                        a(href="#") Cart
+                    li.divider
+                    li
+                        a(href="#") Search
