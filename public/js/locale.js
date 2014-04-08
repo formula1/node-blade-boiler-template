@@ -1,20 +1,4 @@
 jQuery(function($) {
-    var setLng = $.url().param('setLng');
-    var setLngCookie = $.cookie('i18next');
-    var language;
-
-    if (setLngCookie) {
-        language = setLngCookie;
-    } else {
-        if (setLng) {
-            language_complete = setLng;
-        } else {
-            language_complete = navigator.language;
-        }
-
-        language = (language_complete);
-    }
- 
     $("#remember_me").click(function(e) {
       if ($("#remember_me").val() == "off"){
         $("#password").attr("disabled", true)
@@ -152,35 +136,4 @@ jQuery(function($) {
           }
         })
     })  
-    function setLanguage() {
-        // save to use translation function as resources are fetched
-        $("body").i18n();
-        $("#language-menu").hide();
-    }
-
-   // language selector
-   $("li.language-menu").on("click", function() {
-       $("#language-menu").toggle();
-       return false;
-   });
-    $("#language-menu a").on("click", function() {
-        var windowReload = false; // TRUE = reload the page; FALSE = do not reload the page
-        var $this = $(this);
-        var language = $this.attr("id");
-        if (windowReload) {
-            window.location.href = "/?lang=" + language;
-        } else {
-            console.log(language);
-            i18n.setLng(language, location.reload());
-            i18n.init({
-                lng:language
-                ,debug:false
-            }, setLanguage);
-        }
-
-        $("#language-menu a").removeClass("selected-language");
-        $this.addClass("selected-language");
-
-        return false;
-    });
 });
