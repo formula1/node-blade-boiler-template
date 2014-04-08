@@ -17,11 +17,8 @@ logCategory = "APP config"
 # TODO store log messages in the db
 logger.configure()
 
-flash = require "connect-flash"
 # Create server and set environment
 app = express()
-app.configure ->
-  app.use( flash() )
 app.settings.env = process.env.NODE_ENV if process.env.NODE_ENV
 app.configure "production", "development", "test", ->
   config.setEnvironment app.settings.env
@@ -53,6 +50,4 @@ module.exports = ->
   routes app
   #
   app
-# register i18next helpers
-# i18next.registerAppHelper(app)
 logger.info "--- Modules loaded into namespace ---", logCategory

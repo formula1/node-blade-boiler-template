@@ -4,14 +4,12 @@
 //[if IE 8]>         <html class="no-js lt-ie9"> <![endif]
 //[if gt IE 8]>      <html class="no-js"> <![endif]
 html(lang=lang)
-    include "includes/head.blade"
-    include "includes/scripts.blade"
+    include "head.blade"
     body
         //[if lt IE 7]> <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p> <![endif]
         block body
         #wrap
-            include "../views/header.blade"
+            include "header.blade"
             #page
                 block page
-        include "../views/footer.blade"
-        include "includes/foot.blade"
+        include "footer.blade"
