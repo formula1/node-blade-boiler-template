@@ -15,10 +15,9 @@ footer
                             span=t("ns.layout:footer.language")
                             b.caret
                         .dropdown-menu.well.pull-right
-                            - var langFile = locals.settings.languages
                             #language-menu
                                 ul
+                                    - var langFile = locals.settings.languages
                                     - for(var i in langFile)
-                                        - var o = langFile[i]
                                         li
-                                            a(id=""+i data-i18n="language."+i)=o
+                                            a(href="/?setLng="+i)=t(langFile[i])
