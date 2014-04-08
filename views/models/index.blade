@@ -1,0 +1,15 @@
+include "../../layout/layout.blade"
+replace block page
+  h1 Available Models
+  table.table
+      -if(locals.model.models.length > 0)
+          thead
+              tr
+                  td Model Name
+                  td Number of instances
+          tbody
+              foreach locals.model.models as model
+                  tr
+                      td
+                        a(href=locals.utils.pathToUrl(model.path)= model.title
+                      td= model.count

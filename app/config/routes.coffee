@@ -1,9 +1,9 @@
-#### Routes
+### Routes
 # We are setting up these routes:
 #
 # GET, POST, PUT, DELETE methods are going to the same controller methods - we dont care.
 # We are using method names to determine controller actions for clearness.
-
+###
 fs = require 'fs'
 
 module.exports = (app) ->
@@ -58,6 +58,9 @@ routeMvc = (controllerName, methodName, req, res, next) ->
   console.log(controller[methodName])
   if typeof controller[methodName] is "function"
     actionMethod = controller[methodName].bind controller
+    actionMethod req, res, next
+  else if typeof controller["all"] is "function"
+    actionMethod = controller["all"].bind controller
     actionMethod req, res, next
   else
     console.warn "method not found: " + methodName

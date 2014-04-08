@@ -81,6 +81,16 @@ fOCSchema = (settings)->
           else
             process.nextTick ()->
               next(err, doc)
+  ret.statics.autocomplete = (search, field, limit, next)->
+    that = this
+    if typeof limit != "object"
+      limit = {}
+    limit[field] new RegExp('^'+search, 'gi');
+    this.find limit, field+" _id", (err, doc)->
+      if err
+        next err
+      else
+        next null, doc
   return ret
 
 

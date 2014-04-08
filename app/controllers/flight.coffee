@@ -100,8 +100,6 @@ parse_row = (data, callback)->
     tf = {name:data.topic_name}
   else
     tf = {topic_id:data.topic_id}
-  # I should probably define my functions
-  # before I begin to avoid such callback hell
   
   # In case you didn't realize where you were, welcome to callback hell.
   # I could probably find out which object we are failing on to figure out what should be dealt with

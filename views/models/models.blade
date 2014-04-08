@@ -1,0 +1,55 @@
+-if(locals.companies.length == 0)
+    -if(locals.user && locals.user.groups == "admin")
+        div.alert.alert-info To start looking at companies add a few or add them with the CSV Uploader
+    -else
+        div.alert.alert-info There is currently no companies to view
+-else
+    div
+        h4 Companies
+        table.table
+            thead
+                tr
+                    td Name
+                    td Website
+                    td Category
+                    td # of Licenses
+                    td # of Addresses
+                    td # of Members
+                    -if(locals.user && locals.user.groups == "admin")
+                        td Action
+            tbody
+                -for(var c in locals.companies)
+                    tr
+                        td
+                            a(href="flight/overview?c="+locals.companies[c].name)= locals.companies[c].name
+                        td
+                            a(href=locals.companies[c].url) Website
+                        td= locals.companies[c].topic.name
+                        td= locals.companies[c].license.length
+                        td= locals.companies[c].addresses.length
+                        td= locals.companies[c].users.length
+                        -if(locals.user.groups == "admin")
+                            td
+                                a(href="flight/"+locals.companies[c].name+"/delete") Delete
+                -if(locals.user && locals.user.groups == "admin")
+                    tr
+                        form.form-inline(role="form" method="POST" action="flight/company/add")
+                            td.form-group
+                                label.sr-only(for="flight_comp_add_name") Company Name
+                                input.form-control#flight_company_add_name(name="flight_comp_name" type="text", placeholder="Company Name")
+                            td.form-group
+                                label.sr-only(for="flight_comp_add_web") Company Name
+                                input.form-control#flight_company_add_web(name="flight_comp_web" type="text", placeholder="Website")
+                            td.form-group
+                                label.sr-only(for="flight_comp_add_topic") Topic
+                                select.form-control#flight_comp_add_topic(name="flight_comp_topic")
+                                    -for(var topic in locals.flight_topics)
+                                        option(value=locals.flight_topics[topic]._id)= locals.flight_topics[topic].name
+                            td
+                                Add Later
+                            td
+                                Add Later
+                            td
+                                Add Later
+                            td
+                                button.btn.btn-default(type="submit") Add
