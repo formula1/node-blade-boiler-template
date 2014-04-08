@@ -8,7 +8,12 @@ html(lang=lang)
     head
         link( rel="stylesheet" href="/stylesheets/screen.css")
         link( rel="stylesheet" href="/stylesheets/app.css")
+        link( rel="stylesheet" href="/css/vendor/fontello/fontello.css")
+        //link( rel="stylesheet" href="/css/vendor/foundation/foundation-icons/foundation-icons.css")
         script( src="/js/vendor/foundation/foundation.min.js")
+        script( src="/js/vendor/skrollr.min.js")
+        //script( src="/js/vendor/foundation/foundation.js")
+        //script( src="/js/vendor/foundation/foundation.reveal.js")
     body
         //[if lt IE 7]> <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p> <![endif]
         block body
@@ -17,3 +22,31 @@ html(lang=lang)
             //#page
                 block page
         //include "../views/footer.blade"
+        #loginModal.reveal-modal.tiny
+            a#facebook.federated(href='#')
+                i.icon-facebook
+                | Login with Facebook
+            // &nbsp;&nbsp;&nbsp;facebook login
+            a#twitter.federated(href='#')
+                i.icon-twitter
+                | &nbsp;&nbsp;&nbsp;Login with Twitter
+            // twitter login
+            .or
+                | — or —
+                br
+                br
+            input(type='text', placeholder='Email')
+            label.checkBox
+                input(type='checkbox', name='login')
+                span
+            p(style='display:inline-block; width:80%;')
+                | Check this box if you don't have an account
+                | or a password.
+            input(type='text', placeholder='Password')
+            .loginButtons
+                #signUpBtn.loginButton.register Register
+        #searchModal.reveal-modal.tiny
+            h4
+                | What are you looking for?
+                br
+            input(type='search', placeholder='search')

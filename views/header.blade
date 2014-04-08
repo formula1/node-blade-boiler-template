@@ -24,20 +24,20 @@ header
                             a(href="#") Sign Out
                     li.divider
                     li.section.clearFix
-                        a.signInSignUp(href="#") Login
+                        a.signInSignUp(href="#", data-reveal-id="loginModal") Login
                     li.section.clearFix
-                        a.signInSignUp(href="#") Become a Customer
+                        a.signInSignUp(href="#", data-reveal-id="loginModal") Become a Customer
                     li.divider
                     li.section.clearFix
-                        a(href="#") En
-                    li.section.clearFix
-                        a(href="#") Fr
-                    li.section.clearFix
-                        a(href="#") Es
+                        a(href="#") De
                     li.section.clearFix
                         a(href="#") It
                     li.section.clearFix
-                        a(href="#") De
+                        a(href="#") Es
+                    li.section.clearFix
+                        a(href="#") Fr
+                    li.section.clearFix
+                        a.chosen(href="#") En
             - else
                 ul.right
                     li.divider
@@ -52,25 +52,25 @@ header
                         a(href="#") Sign Out
                     li.divider
                     li.section.clearFix
-                        a.signInSignUp(href="#") Login
+                        a.signInSignUp(href="#", data-reveal-id="loginModal") Login
                     li.section.clearFix
-                        a.signInSignUp(href="#") Become a Customer
+                        a.signInSignUp(href="#", data-reveal-id="loginModal") Become a Customer
                     li.divider
                     li.section.clearFix
-                        a(href="#") En
-                    li.section.clearFix
-                        a(href="#") Fr
-                    li.section.clearFix
-                        a(href="#") Es
+                        a(href="#") De
                     li.section.clearFix
                         a(href="#") It
                     li.section.clearFix
-                        a(href="#") De
-    nav.top-bar#header.clearFix.skrollable.skrollable-between
+                        a(href="#") Es
+                    li.section.clearFix
+                        a(href="#") Fr
+                    li.section.clearFix
+                        a.chosen(href="#") En
+    nav.top-bar#header.clearFix.skrollable.skrollable-between(data-0="top:30px;" data-30="top:0px;")
         ul.title-area#title
-            li.name#logoExtend
+            li.name#logoExtend.skrollable.skrollable-between(data-0="width:110px; height:106px", data-30="width:80px; height:76px", style="width: 110px;")
                 a(href="")
-                    img.logo(src="images/nodejs-light.png")
+                    img.logo#logo(src="images/logo.gif")
             li.toggle-topbar.menu-icon
                 a(href="#") Menu
                 - if (locals.messages.length)
@@ -83,15 +83,23 @@ header
                     li.divider
                     li.has-dropdown.not-click
                         a(href="#") COLLECTIONS
-                        ul.dropdown
+                        ul.dropdown#drop
                             li
-                                a(href="#") temp
+                                a.continental(href="#") temp
                             li
-                                a(href="#") temp
+                                a.earthpositive(href="#") temp
+                            li
+                                a.salvage(href="#") temp
                     li.divider
                     li.has-dropdown.not-click
                         a(href="#") PRODUCTS
-                        ul.dropdown
+                        ul.dropdown#drop
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
                             li
                                 a(href="#") temp
                             li
@@ -99,28 +107,52 @@ header
                             li
                                 a(href="#") temp
                     li.divider
-                    li
+                    li.btn
                         a(href="#") ABOUT
                     li.divider
-                    li
-                        a(href="#") Cart
+                    li.btn
+                        a(href="#")
+                            i.icon-basket
                     li.divider
-                    li
-                        a(href="#") Search
+                    li.btn
+                        a(href="#", data-reveal-id="searchModal")
+                            i.icon-search
             - else
                 ul.right
                     li.divider
-                    li
-                        a(href="#") PRODUCTS
-                    li.divider
-                    li
+                    li.has-dropdown.not-click
                         a(href="#") COLLECTIONS
+                        ul.dropdown#drop
+                            li
+                                a.continental(href="#") temp
+                            li
+                                a.earthpositive(href="#") temp
+                            li
+                                a.salvage(href="#") temp
                     li.divider
-                    li
+                    li.has-dropdown.not-click
+                        a(href="#") PRODUCTS
+                        ul.dropdown#drop
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                            li
+                                a(href="#") temp
+                    li.divider
+                    li.btn
                         a(href="#") ABOUT
                     li.divider
-                    li
-                        a(href="#") Cart
+                    li.btn
+                        a(href="#")
+                            i.icon-basket
                     li.divider
-                    li
-                        a(href="#") Search
+                    li.btn
+                        a(href="#", data-reveal-id="searchModal")
+                            i.icon-search
