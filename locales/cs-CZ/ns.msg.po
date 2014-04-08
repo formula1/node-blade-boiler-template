@@ -1,0 +1,127 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: node-gettext\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "error##passlength"
+msgstr "Heslo musí mít najméně 6 znaků"
+
+msgid "error##saveerr"
+msgstr "Není co uložit"
+
+msgid "error##namelength"
+msgstr "Meno musí mít alespoň 3 znaky"
+
+msgid "error##surnamelength"
+msgstr "Přízvisko musí mít alespoň 3 znaky"
+
+msgid "error##passreq"
+msgstr "Zadejte vaše heslo"
+
+msgid "error##newpassreq"
+msgstr "Zadejte vaše nové heslo"
+
+msgid "error##oldpassreq"
+msgstr "Zadejte vaše staré heslo"
+
+msgid "error##confirmpassreq"
+msgstr "Potvrďte nové heslo"
+
+msgid "error##passequal"
+msgstr "Zadejte prosím stejné heslo jako výše"
+
+msgid "error##emailvalid"
+msgstr "Zadejte prosím platný email"
+
+msgid "error##emailreq"
+msgstr "Zadejte váš email"
+
+msgid "flash##welcome"
+msgstr "Vítejte!"
+
+msgid "flash##inactiveuser"
+msgstr "Uživatel nebyl aktivován, prosím následujte aktivační odkaz ve vašem emailu"
+
+msgid "flash##alreadyauthorized"
+msgstr "Ste už zaregistrován"
+
+msgid "flash##alreadyactivated"
+msgstr "Uživatel je už aktivován"
+
+msgid "flash##authorizationsuccess"
+msgstr "Autorizace úspěšná"
+
+msgid "flash##authorizationfailed"
+msgstr "Neplatné meno nebo email"
+
+msgid "flash##saveerr"
+msgstr "Není co uložit"
+
+msgid "flash##tokenexpires"
+msgstr "Váš aktivační token ztratil platnost. Vyžádejte si prosím aktivační odkaz ještě jednou."
+
+msgid "flash##attemptsrem"
+msgstr "pokusů zůstává"
+
+msgid "flash##attemptrem"
+msgstr "pokus zůstává"
+
+msgid "flash##invalidpass"
+msgstr "Neplatné heslo"
+
+msgid "flash##invalidoldpass"
+msgstr "Neplatné staré heslo"
+
+msgid "flash##invalidconfirmpass"
+msgstr "Neplatné potvrzení hesla"
+
+msgid "flash##activationlink"
+msgstr "Váš aktivační odkaz byl odeslán na váš email"
+
+msgid "flash##sendererror"
+msgstr "Chyba odesílání emailu, prosím zkuste to později znovu"
+
+msgid "flash##dberr"
+msgstr "chyba databáze: "
+
+msgid "flash##validemail"
+msgstr "Zadejte prosím platnou emailovou adresu"
+
+msgid "flash##unauthorized"
+msgstr "Nejste přihlášen jako uživatel"
+
+msgid "flash##lockeduntil"
+msgstr "Účet je uzamčen pokud"
+
+msgid "flash##lockedafter"
+msgstr "Účet je uzamčen po"
+
+msgid "flash##profilesaved"
+msgstr "Profil uložen"
+
+msgid "flash##passwordchanged"
+msgstr "Heslo změneno"
+
+msgid "flash##requestlinkagain"
+msgstr "nebo vyžádejte odkaz znova pokud Jste nepřijali zprávu"
+
+msgid "flash##resetlink"
+msgstr "Váš odkaz na reset hesla byl odeslán na váš email"
+
+msgid "flash##tryagain"
+msgstr "Zkuste znovu"
+
+msgid "flash##tryagainlater"
+msgstr "Prosím zkuste později znovu"
+
+msgid "flash##userdeleted"
+msgstr "Užuivatel byl vymazán"
+
+msgid "flash##wait"
+msgstr "Čakejte prosím..."
+
+msgid "flash##wrongattempts"
+msgstr "nesprávný pokus"

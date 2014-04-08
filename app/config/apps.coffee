@@ -11,6 +11,9 @@ logger = require "winston"
 passport = require "passport"
 __ = require "underscore"
 expressDevice  = require "express-device"
+gettextSync = require "i18next.gettext"
+
+isDevelopment = process.env.NODE_ENV == "development"
 
 ########### initialize passport strategies ######################################
 require "./passport.coffee"
@@ -46,6 +49,12 @@ setViewLocals = (req, res, next) ->
     device: req.device.type          #device type
   next()
 
+############ i18next options #######################################################
+i18nextOptions =
+  resGetPath: 'locales/__lng__/__ns__.po'
+  ns: { namespaces: ['ns.common', 'ns.layout', 'ns.forms', 'ns.msg'], defaultNs: 'ns.common'}
+  debug: isDevelopment
+
 ############ scan for available languages ###########################################
 getAvailableLanguages = ->
   excludeFiles = [ "dev", "README.md", "config.json", "translations" ]
@@ -62,7 +71,8 @@ module.exports = (app) ->
   logger.info "Configure expressjs", "CONFIGURE"
   maxAgesOption = { maxAge: 86400000 * 30 }
   
-  i18next.init(config.I18N)
+  i18next.backend(gettextSync);
+  i18next.init(i18nextOptions)
   i18next.registerAppHelper(app)
 
   app
@@ -72,24 +82,23 @@ module.exports = (app) ->
   .use( express.static( "js", maxAgesOption) )
   .use( express.static( "locales", maxAgesOption) )
   .use( express.static( "data/topo", maxAgesOption) )
+  .use( express.logger("dev") )
   .use( express.compress() )
   .use( express.urlencoded() )
   .use( express.json() )
   .use( express.methodOverride() )
   .use( express.cookieParser("90dj7Q2nC53pFj2b0fa81a3f663fd64") )
   .use( express.session(sessionOptions) )
-  .use( passport.initialize() )
-  .use( passport.session() )
-  .use( express.logger("dev") )
-  .use( express.errorHandler( { dumpException: true,  showStack: true } ) )
-  .use( i18next.handle )
   .use( express.csrf() )
+  .use( i18next.handle )
   .use( connectFlash() )
   .use( expressDevice.capture() )
   .use( setViewLocals )
-  .use( expressDevice.capture() )
   .use( blade.middleware("views") )
   .set( "sessionOptions", sessionOptions ) #used by engine.io
   .set( "view engine", "blade" )
   .set( "languages", getAvailableLanguages() )
+  .use( passport.initialize() )
+  .use( passport.session() )
+  .use( express.errorHandler( { dumpException: true,  showStack: true } ) )
   app

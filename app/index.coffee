@@ -40,8 +40,6 @@ dbconnection.init (err, result) ->
 module.exports = ->
   #  Load Mongoose Models
   models app
-  # Init i18next
-  # i18next.init(config.I18N)
   # Load Expressjs config
   apps app
   # Init engine.io

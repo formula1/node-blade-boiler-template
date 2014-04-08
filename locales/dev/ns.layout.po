@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: node-gettext\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "search##advanced"
+msgstr "Advanced"
+
+msgid "search##search"
+msgstr "Search"
+
+msgid "user##gravatar"
+msgstr "Gravatar"
+
+msgid "user##name"
+msgstr "Your name"
+
+msgid "user##surname"
+msgstr "Your surname"
+
+msgid "user##profile"
+msgstr "Profile"
+
+msgid "user##login"
+msgstr "Login"
+
+msgid "user##logout"
+msgstr "Log out"
+
+msgid "user##contact"
+msgstr "Contact"
+
+msgid "user##help"
+msgstr "Help"
+
+msgid "user##password"
+msgstr "Password"
+
+msgid "footer##network"
+msgstr "TZM Network"
+
+msgid "footer##tools"
+msgstr "Tools"
+
+msgid "footer##documentations"
+msgstr "Documentations"
+
+msgid "footer##faq"
+msgstr "F.A.Q"
+
+msgid "footer##profile"
+msgstr "Profile"
+
+msgid "footer##help"
+msgstr "Help"
+
+msgid "footer##recommend"
+msgstr "Recommend"
+
+msgid "footer##search"
+msgstr "Search"
+
+msgid "footer##account"
+msgstr "Account settings..."
+
+msgid "footer##logout"
+msgstr "Log Out"
+
+msgid "footer##language"
+msgstr "Language"
+
+msgid "user##password_new"
+msgstr "New password"
+
+msgid "user##password_old"
+msgstr "Old Password"
+
+msgid "user##password_confirm"
+msgstr "Confirm Password"
