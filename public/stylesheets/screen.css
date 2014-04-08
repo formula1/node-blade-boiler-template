@@ -1,0 +1,361 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+/* line 17, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../.rvm/gems/ruby-2.0.0-p353/gems/compass-0.12.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 11, ../sass/screen.scss */
+body {
+  color: #5A5A5A !important;
+}
+
+/* line 15, ../sass/screen.scss */
+#utility {
+  height: 30px;
+  background-color: #5A5A5A;
+  color: #BCBCBC !important;
+  font-weight: 300;
+}
+
+/* line 26, ../sass/screen.scss */
+.clearFix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+/* line 35, ../sass/screen.scss */
+#utility #logoExtend {
+  width: 90px;
+  height: 110% !important;
+  margin-left: 20px;
+  background-color: #801901;
+  z-index: 1;
+}
+
+/* line 46, ../sass/screen.scss */
+#header #logoExtend {
+  position: fixed;
+  top: 0px;
+  height: 106px;
+  width: 90px;
+  margin-left: 20px;
+  background-color: #801901;
+  z-index: 1;
+}
+
+/* line 58, ../sass/screen.scss */
+#title {
+  height: 110%;
+}
+
+/* line 61, ../sass/screen.scss */
+#utility a {
+  font-size: 14px !important;
+  line-height: 14px !important;
+  padding: 8px 10px !important;
+  height: 100% !important;
+  cursor: pointer !important;
+  background-color: #5A5A5A !important;
+  color: #BCBCBC !important;
+  font-weight: normal;
+}
+
+/* line 71, ../sass/screen.scss */
+#utility a:hover {
+  background: url('/images/../images/utility_select.png?1396879987') no-repeat;
+  background-position: center bottom;
+}
+
+/* line 75, ../sass/screen.scss */
+#utility a.chosen {
+  background: url('/images/../images/utility_select.png?1396879987') no-repeat;
+  background-position: center bottom;
+}
+
+/* line 79, ../sass/screen.scss */
+#logoExtend a {
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+}
+
+/* line 84, ../sass/screen.scss */
+#utility .divider {
+  height: 30px !important;
+  border-right: solid 1px #BCBCBC !important;
+  border-left: none !important;
+}
+
+/* line 90, ../sass/screen.scss */
+#header .divider {
+  height: 50px !important;
+  border-right: solid 1px #BCBCBC !important;
+  border-left: none !important;
+}
+
+/* line 96, ../sass/screen.scss */
+#header {
+  height: 50px;
+  top: 30px;
+  width: 100%;
+  border-bottom: 1px solid #BCBCBC;
+  background-color: #ffffff;
+  color: #5a5a69 !important;
+  position: fixed;
+  font-family: 'roboto condensed', Arial, sans-serif;
+  z-index: 10;
+}
+
+/* line 108, ../sass/screen.scss */
+#page {
+  margin-top: 50px;
+}
+
+/* line 111, ../sass/screen.scss */
+#header .logo {
+  width: 100%;
+}
+
+/* line 114, ../sass/screen.scss */
+#header li {
+  height: 100%;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+/* line 122, ../sass/screen.scss */
+#header li a {
+  padding: 2px 15px;
+  background-color: #ffffff !important;
+  color: #5a5a69 !important;
+  font-weight: normal;
+}
+
+/* line 128, ../sass/screen.scss */
+#header li.btn a:hover {
+  background-color: #BCBCBC !important;
+}
+
+/* line 131, ../sass/screen.scss */
+#header section ul {
+  border-bottom: 1px solid #BCBCBC;
+  background-color: #ffffff !important;
+  height: 49px !important;
+}
+
+/* line 137, ../sass/screen.scss */
+#loginModal, #searchModal {
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 10px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 10px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 10px;
+  text-align: center;
+}
+
+/* line 144, ../sass/screen.scss */
+#loginModal .federated {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 0 auto 20px auto;
+  text-align: left;
+  position: relative;
+  font-size: 15px;
+  font-weight: 400;
+  display: block;
+  text-transform: uppercase;
+  border: 1px solid #5A5A5A;
+  color: #FFF !important;
+  cursor: pointer;
+}
+
+/* line 159, ../sass/screen.scss */
+#loginModal #facebook {
+  background-color: #3b5998;
+}
+
+/* line 162, ../sass/screen.scss */
+#loginModal #twitter {
+  background-color: #55acee;
+}
+
+/* line 166, ../sass/screen.scss */
+#loginModal input[type='text'] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 0 auto 20px auto;
+  text-align: left;
+  position: relative;
+  font-size: 15px;
+  font-weight: 300;
+  display: block;
+  text-transform: uppercase;
+  border: 1px solid #5A5A5A;
+  color: #BCBCBC;
+}
+
+/* line 180, ../sass/screen.scss */
+#loginModal p {
+  font-size: 15px !important;
+  margin-left: -30px;
+}
+
+/* line 185, ../sass/screen.scss */
+#loginModal .loginButtons {
+  margin-top: 120px;
+}
+
+/* line 189, ../sass/screen.scss */
+#loginModal .loginButton.register {
+  float: right;
+}
+
+/* line 192, ../sass/screen.scss */
+#loginModal .loginButton {
+  background-color: #801901;
+  border: 1px solid #262626;
+  text-align: center;
+  padding: 10px;
+  font-size: 20px;
+  line-height: 20px;
+  text-transform: uppercase;
+  width: 130px;
+  float: left;
+  color: #FFF;
+  position: relative;
+  cursor: pointer;
+}
+
+/* line 206, ../sass/screen.scss */
+#loginModal .checkBox {
+  float: left;
+  padding: 30px 20px 0px;
+}
+
+/* line 211, ../sass/screen.scss */
+#searchModal input[type='search'] {
+  font-size: 24px;
+  text-transform: uppercase;
+  border: 1px solid #BCBCBC;
+  padding: 10px 10px 10px 45px;
+  background: url('/images/../images/searchboxicon.png?1396960867') no-repeat;
+  background-position: 10px center;
+  background-size: auto 24px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -ms-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  font-weight: 300;
+  margin: 20px 0 0 0;
+}
+
+/* line 229, ../sass/screen.scss */
+#drop li {
+  border-left: 1px solid #BCBCBC;
+  border-right: 1px solid #BCBCBC;
+  border-bottom: 1px solid #BCBCBC;
+}
+
+/* line 234, ../sass/screen.scss */
+#drop li a {
+  padding: 16px 16px 15px;
+  font-size: 16px;
+  width: 180px;
+  text-align: right;
+  font-weight: 300;
+  position: relative;
+}
+
+/* line 243, ../sass/screen.scss */
+#drop li a:hover {
+  background-color: #BCBCBC !important;
+}
+
+/* line 246, ../sass/screen.scss */
+#drop li a:hover.continental {
+  background-color: #3C7191 !important;
+  color: #FFF !important;
+}
+
+/* line 251, ../sass/screen.scss */
+#drop li a:hover.earthpositive {
+  background-color: #00975F !important;
+  color: #FFF !important;
+}
+
+/* line 256, ../sass/screen.scss */
+#drop li a:hover.salvage {
+  background-color: #CD7126 !important;
+  color: #FFF !important;
+}

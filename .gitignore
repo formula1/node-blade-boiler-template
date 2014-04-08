@@ -29,3 +29,6 @@ npm-debug.log
 uploads
 locales/translations
 #data/chapters.json
+public/ruby-1.9.3-p545
+public/.sass-cache
+.gitignore
