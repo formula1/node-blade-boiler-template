@@ -1,0 +1,91 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: node-gettext\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "menu##projects"
+msgstr "Projekty"
+
+msgid "menu##map"
+msgstr "Mapa"
+
+msgid "menu##calendar"
+msgstr "Kalendář"
+
+msgid "menu##forums"
+msgstr "Fóra"
+
+msgid "menu##guide"
+msgstr "Příručka"
+
+msgid "search##advanced"
+msgstr "Rozšířené"
+
+msgid "search##search"
+msgstr "Hledání"
+
+msgid "user##gravatar"
+msgstr "Avatar"
+
+msgid "user##name"
+msgstr "Vaše meno"
+
+msgid "user##surname"
+msgstr "Vaše přízvisko"
+
+msgid "user##profile"
+msgstr "Profil"
+
+msgid "user##login"
+msgstr "Přihlásit"
+
+msgid "user##logout"
+msgstr "Odhlásit"
+
+msgid "user##contact"
+msgstr "Kontakt"
+
+msgid "user##help"
+msgstr "Pomoc"
+
+msgid "user##password"
+msgstr "Heslo"
+
+msgid "footer##network"
+msgstr "TZM Network"
+
+msgid "footer##tools"
+msgstr "Nástroje"
+
+msgid "footer##documentations"
+msgstr "Dokumentce"
+
+msgid "footer##faq"
+msgstr "F.A.Q -Často kladené otázky"
+
+msgid "footer##profile"
+msgstr "Profil"
+
+msgid "footer##help"
+msgstr "Pomoc"
+
+msgid "footer##recommend"
+msgstr "Doporučit"
+
+msgid "footer##account"
+msgstr "Nastavení účtu..."
+
+msgid "footer##logout"
+msgstr "Odhlásit"
+
+msgid "user##password_new"
+msgstr "Nové heslo"
+
+msgid "user##password_old"
+msgstr "Staré heslo"
+
+msgid "user##password_confirm"
+msgstr "Potvrdit heslo"

@@ -1,0 +1,52 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: node-gettext\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "menu##projects"
+msgstr "Projets"
+
+msgid "menu##map"
+msgstr "Carte"
+
+msgid "menu##calendar"
+msgstr "Événements"
+
+msgid "menu##forums"
+msgstr "Forums"
+
+msgid "search##advanced"
+msgstr "Avancé"
+
+msgid "search##search"
+msgstr "Recherche"
+
+msgid "user##gravatar"
+msgstr "Gravatar"
+
+msgid "user##profile"
+msgstr "Profile"
+
+msgid "user##login"
+msgstr "Se Connecter"
+
+msgid "user##logout"
+msgstr "Déconnexion"
+
+msgid "user##contact"
+msgstr "Contact"
+
+msgid "user##help"
+msgstr "Aide"
+
+msgid "footer##language"
+msgstr "Langues"
+
+msgid "footer##network"
+msgstr "TZM Reseaux"
+
+msgid "footer##search"
+msgstr "Recherche"

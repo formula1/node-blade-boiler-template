@@ -1,7 +1,6 @@
 #### Config file
 # Sets application config parameters depending on `env` name
 db = require "./db"
-i18next = require "./i18n"
 exports.setEnvironment = (env) ->
   # General settings
   exports.SMTP =
@@ -39,8 +38,6 @@ exports.setEnvironment = (env) ->
       exports.DEBUG_CLIENT = true
       exports.REDIS_DB = db.redis
       exports.MONGO_DB_URL = db.mongo.MONGO_DB_URL
-      i18next.debug = false
-      exports.I18N = i18next
     when "test"
       exports.PORT = process.env.PORT or 3000
       exports.APP =
@@ -53,7 +50,6 @@ exports.setEnvironment = (env) ->
       exports.DEBUG_CLIENT = true
       exports.REDIS_DB = db.redis
       exports.MONGO_DB_URL = db.mongo.MONGO_DB_URL
-      exports.I18N = i18next
     when "production"
       exports.PORT = process.env.PORT or process.env.VMC_APP_PORT or process.env.VCAP_APP_PORT
       exports.APP =
@@ -65,7 +61,6 @@ exports.setEnvironment = (env) ->
       exports.DEBUG_CLIENT = false
       exports.REDIS_DB = db.redis
       exports.MONGO_DB_URL = db.mongo.MONGO_DB_URL
-      exports.I18N = i18next
     else
       console.log "environment #{env} not found"
 
