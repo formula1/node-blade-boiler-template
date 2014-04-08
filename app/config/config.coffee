@@ -15,6 +15,7 @@ exports.setEnvironment = (env) ->
 
 
   uploads = exports.UPLOADS = 'uploads'
+  cdn = exports.CDN = "cdn.continentalclothing.com"
 
   fs = require 'fs'
   try
