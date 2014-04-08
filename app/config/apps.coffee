@@ -29,13 +29,16 @@ config = require "../config/config"
 config.setEnvironment process.env.NODE_ENV or "development"
 
 ############ session setup #######################################################
+remoteRedisUrl =  process.env.REDISTOGO_URL || process.env.REDISCLOUD_URL
+redisClient = if remoteRedisUrl? then require("redis-url").connect(remoteRedisUrl) else require("redis").createClient()
+
 sessionOptions =
   #express-session options
   key: "blade-connect.sid"
   secret: "f2e5a67d388ff2090dj7Q2nC53pF"
   cookie:
     maxAge: 86400000 * 30 # 30 days
-  store: new RedisStore()
+  store: new RedisStore(client: redisClient)
 
 ############ set view locals #####################################################
 setViewLocals = (req, res, next) ->
@@ -71,7 +74,7 @@ module.exports = (app) ->
   logger.info "Configure expressjs", "CONFIGURE"
   maxAgesOption = { maxAge: 86400000 * 30 }
   
-  i18next.backend(gettextSync);
+  i18next.backend(gettextSync)
   i18next.init(i18nextOptions)
   i18next.registerAppHelper(app)
 
