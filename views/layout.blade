@@ -10,6 +10,34 @@ html(lang=lang)
         block body
         #wrap
             include "header.blade"
-            #page
+            //#page
                 block page
-        include "footer.blade"
+        //include "../views/footer.blade"
+        #loginModal.reveal-modal.tiny
+            a#facebook.federated(href='#')
+                i.icon-facebook
+                | Login with Facebook
+            // &nbsp;&nbsp;&nbsp;facebook login
+            a#twitter.federated(href='#')
+                i.icon-twitter
+                | &nbsp;&nbsp;&nbsp;Login with Twitter
+            // twitter login
+            .or
+                | — or —
+                br
+                br
+            input(type='text', placeholder='Email')
+            label.checkBox
+                input(type='checkbox', name='login')
+                span
+            p(style='display:inline-block; width:80%;')
+                | Check this box if you don't have an account
+                | or a password.
+            input(type='text', placeholder='Password')
+            .loginButtons
+                #signUpBtn.loginButton.register Register
+        #searchModal.reveal-modal.tiny
+            h4
+                | What are you looking for?
+                br
+            input(type='search', placeholder='search')

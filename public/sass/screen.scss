@@ -1,0 +1,259 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass/reset";
+@import "compass/css3/border-radius";
+@import "compass/css3/box-shadow";
+@import "compass/css3/images";
+
+body {
+  color: #5A5A5A !important;
+}
+
+#utility {
+//  left: 0;
+//  right: 0;
+  height: 30px;
+//  width: 100%;
+//  position: relative;
+  background-color: #5A5A5A;
+  color: #BCBCBC !important;
+  font-weight: 300;
+}
+
+.clearFix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+#utility #logoExtend {
+  width: 90px;
+  height: 110% !important;
+  margin-left: 20px;
+  //  left: 20px;
+  //  top: 0;
+  //  position: absolute;
+  background-color: #801901;
+  z-index: 1;
+}
+
+#header #logoExtend {
+  position: fixed;
+  top: 0px;
+  height: 106px;
+  width: 90px;
+  margin-left: 20px;
+//  left: 20px;
+//  top: 0;
+//  position: absolute;
+  background-color: #801901;
+  z-index: 1;
+}
+#title {
+  height: 110%;
+}
+#utility a {
+  font-size: 14px !important;
+  line-height: 14px !important;
+  padding: 8px 10px !important;
+  height: 100% !important;
+  cursor: pointer !important;
+  background-color: #5A5A5A !important;
+  color: #BCBCBC !important;
+  font-weight: normal;
+}
+#utility a:hover {
+  @include background(image-url("../images/utility_select.png") no-repeat);
+  background-position: center bottom;
+}
+#utility a.chosen {
+  @include background(image-url("../images/utility_select.png") no-repeat);
+  background-position: center bottom;
+}
+#logoExtend a {
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+}
+
+#utility .divider {
+  height: 30px !important;
+  border-right: solid 1px #BCBCBC !important;
+  border-left: none !important;
+}
+
+#header .divider {
+  height: 50px !important;
+  border-right: solid 1px #BCBCBC !important;
+  border-left: none !important;
+}
+
+#header {
+  height: 50px;
+  top: 30px;
+  width: 100%;
+  border-bottom: 1px solid #BCBCBC;
+  background-color: #ffffff;
+  color: #5a5a69 !important;
+  position: fixed;
+  font-family: 'roboto condensed', Arial, sans-serif;
+  z-index: 10;
+}
+
+#page {
+  margin-top: 50px;
+}
+#header .logo {
+  width: 100%;
+}
+#header li {
+  height: 100%;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+#header li a {
+  padding: 2px 15px;
+  background-color: #ffffff !important;
+  color: #5a5a69 !important;
+  font-weight: normal;
+}
+#header li.btn a:hover {
+  background-color: #BCBCBC !important;
+}
+#header section ul {
+  border-bottom: 1px solid #BCBCBC;
+  background-color: #ffffff !important;
+  height: 49px !important;
+}
+
+#loginModal, #searchModal {
+//  width: 350px;
+//  height: 500px;
+  @include box-shadow(rgba(0, 0, 0, 0.2) 0px 0px 0px 10px);
+  text-align: center;
+}
+
+#loginModal .federated {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 0 auto 20px auto;
+  text-align: left;
+  position: relative;
+  font-size: 15px;
+  font-weight: 400;
+  display: block;
+  text-transform: uppercase;
+  border: 1px solid #5A5A5A;
+  color: #FFF !important;
+  cursor: pointer;
+}
+
+#loginModal #facebook {
+  background-color: #3b5998;
+}
+#loginModal #twitter {
+  background-color: #55acee;
+}
+
+#loginModal input[type='text'] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 0 auto 20px auto;
+  text-align: left;
+  position: relative;
+  font-size: 15px;
+  font-weight: 300;
+  display: block;
+  text-transform: uppercase;
+  border: 1px solid #5A5A5A;
+  color: #BCBCBC;
+}
+
+#loginModal p {
+  font-size: 15px !important;
+  margin-left: -30px;
+}
+
+#loginModal .loginButtons {
+  margin-top: 120px;
+}
+
+#loginModal .loginButton.register {
+  float: right;
+}
+#loginModal .loginButton {
+  background-color: #801901;
+  border: 1px solid #262626;
+  text-align: center;
+  padding: 10px;
+  font-size: 20px;
+  line-height: 20px;
+  text-transform: uppercase;
+  width: 130px;
+  float: left;
+  color: #FFF;
+  position: relative;
+  cursor: pointer;
+}
+#loginModal .checkBox {
+  float: left;
+  padding: 30px 20px 0px;
+}
+
+#searchModal input[type='search'] {
+  font-size: 24px;
+  text-transform: uppercase;
+  border: 1px solid #BCBCBC;
+  padding: 10px 10px 10px 45px;
+  @include background(image-url("../images/searchboxicon.png") no-repeat);
+  background-position: 10px center;
+  background-size: auto 24px;
+  @include border-radius(0px);
+  @include box-shadow(none);
+  font-weight: 300;
+  margin: 20px 0 0 0;
+//  transition-duration: 0.2s;
+}
+#searchModal input[type='search']:focus {
+//  width: 420px;
+}
+
+#drop li {
+  border-left:1px solid #BCBCBC;
+  border-right:1px solid #BCBCBC;
+  border-bottom:1px solid #BCBCBC;
+}
+#drop li a {
+  padding: 16px 16px 15px;
+  font-size:16px;
+  width: 180px;
+  text-align: right;
+  font-weight: 300;
+  position: relative;
+}
+
+#drop li a:hover {
+  background-color: #BCBCBC !important;
+}
+#drop li a:hover.continental {
+  background-color: #3C7191 !important;
+  color: #FFF !important;
+}
+
+#drop li a:hover.earthpositive {
+  background-color: #00975F !important;
+  color: #FFF !important;
+}
+
+#drop li a:hover.salvage {
+  background-color: #CD7126 !important;
+  color: #FFF !important;
+}
