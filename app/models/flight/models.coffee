@@ -1,9 +1,9 @@
 mongoose = require('mongoose')
 Schema = mongoose.Schema
-
+rmv = require "../../utils/m-schema-layer.coffee"
 
 fOCSchema = (settings)->
-  ret = new Schema settings
+  ret = rmv(settings)
   console.log("TYPING"+typeof ret)
   ret.statics.findOrCreate = (query,to_save, next)->
     that = this
@@ -85,7 +85,7 @@ fOCSchema = (settings)->
     that = this
     if typeof limit != "object"
       limit = {}
-    limit[field] new RegExp('^'+search, 'gi');
+    limit[field] = new RegExp('^'+search, 'gi')
     this.find limit, field+" _id", (err, doc)->
       if err
         next err
@@ -166,7 +166,7 @@ sRegion.post 'save', (doc)->
 sRegion.post 'remove', (doc)->
   if(doc.parent != null)
     Region.update { _id: doc.parent }
-    , { $pull: { children: doc._id } } 
+    , { $pull: { children: doc._id } }
     ,(err)->
       if(err)
         console.log('Region Parent could not update'+err)

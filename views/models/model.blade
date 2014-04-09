@@ -1,0 +1,44 @@
+include "../layout.blade"
+replace block page
+    h1=locals.model.model.modelName
+    div
+        -if(locals.model.instances.length == 0)
+            p there doesnt seem to be any instances of this model
+        -else
+            h2 Instance List
+            table.table
+                thead
+                    tr
+                        td _id
+                        -var paths=[]
+                        -for(var i in locals.model.model.schema.paths)
+                            -if(i != "_id")
+                                td= locals.model.model.getPretty(i)
+                                -paths.push(i)
+                tbody
+                    foreach locals.model.instances as instance
+                        tr
+                            td
+                                -var url = locals.model.utils.object2URL(instance)
+                                a(href=url)= instance._id
+                            foreach paths as path
+                                -if(path != "_id")
+                                    td
+                                        -var valued = instance[path]
+                                        input(type="text" name=path value=valued)
+    div
+        h3 Static Methods
+        div.flight_sidebar.span4.accordian#flight_sidebar
+        -for(var i in locals.model.model.schema.statics)
+            div.accordian-group.sidebar_item
+                div.accordian-heading
+                    a.accordian-toggle(data-toggle="collapse", data-parent="flight_sidebar", href="#collapse_"+i)= i
+                div.accordian-body.collapse.in(id="collapse_"+i)
+                    div.accordian-inner
+                        -var url = locals.model.utils.object2URL(locals.model.model)
+                        form(action=url+"/"+i)
+                            -var args = locals.model.utils.getArgs(locals.model.model.schema.statics[i]);
+                            foreach args as arg
+                                label=arg
+                                input(type="text" name=arg)
+                                br
