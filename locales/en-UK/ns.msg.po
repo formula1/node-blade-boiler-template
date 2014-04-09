@@ -1,0 +1,133 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: node-gettext\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "error##passlength"
+msgstr "Password must be at least 6 characters long"
+
+msgid "error##saveerr"
+msgstr "Nothing to save"
+
+msgid "error##namelength"
+msgstr "Name must be at least 3 chars long"
+
+msgid "error##surnamelength"
+msgstr "Surname must be at least 3 chars long"
+
+msgid "error##passreq"
+msgstr "Enter your password"
+
+msgid "error##newpassreq"
+msgstr "Enter your new password"
+
+msgid "error##oldpassreq"
+msgstr "Enter your old password"
+
+msgid "error##confirmpassreq"
+msgstr "Confirm new password"
+
+msgid "error##passequal"
+msgstr "Please enter the same password as above"
+
+msgid "error##emailvalid"
+msgstr "Please enter a valid email"
+
+msgid "error##emailreq"
+msgstr "Enter your email"
+
+msgid "flash##welcome"
+msgstr "Welcome!"
+
+msgid "flash##inactiveuser"
+msgstr "User is not activated, Please follow activation link on your email"
+
+msgid "flash##alreadyauthorized"
+msgstr "You are already signed up"
+
+msgid "flash##alreadyactivated"
+msgstr "User is already activated"
+
+msgid "flash##authorizationsuccess"
+msgstr "Authorization success"
+
+msgid "flash##authorizationfailed"
+msgstr "Email or password invalid"
+
+msgid "flash##saveerr"
+msgstr "Nothing to save"
+
+msgid "flash##tokenexpires"
+msgstr "Your activation token has expired. Please request activation link again"
+
+msgid "flash##attemptsrem"
+msgstr "Attempts remaining"
+
+msgid "flash##attemptrem"
+msgstr "Attempt remaining"
+
+msgid "flash##invalidpass"
+msgstr "Invalid password"
+
+msgid "flash##invalidoldpass"
+msgstr "Invalid old password"
+
+msgid "flash##invalidconfirmpass"
+msgstr "Invalid confirm password"
+
+msgid "flash##activationlink"
+msgstr "Your activation link was sent to your email"
+
+msgid "flash##sendererror"
+msgstr "Email send error, please try again later"
+
+msgid "flash##dberr"
+msgstr "Database error: "
+
+msgid "flash##validemail"
+msgstr "Please enter a valid email address"
+
+msgid "flash##unauthorized"
+msgstr "You are not login as user"
+
+msgid "flash##lockeduntil"
+msgstr "Account is locked until"
+
+msgid "flash##lockedafter"
+msgstr "Account is locked after "
+
+msgid "flash##profilesaved"
+msgstr "Profile saved"
+
+msgid "flash##passwordchanged"
+msgstr "Password changed"
+
+msgid "flash##requestlinkagain"
+msgstr "Or request link again if you have not received a message"
+
+msgid "flash##resetlink"
+msgstr "Your reset password link sent to your email"
+
+msgid "flash##tryagain"
+msgstr "Try again"
+
+msgid "flash##tryagainlater"
+msgstr "Please try again later"
+
+msgid "flash##userdeleted"
+msgstr "User has been deleted"
+
+msgid "flash##wait"
+msgstr "Please wait..."
+
+msgid "flash##wrongattempts"
+msgstr "wrong attempts"
+
+msgid "flash##unsynced"
+msgstr "List may be out of date from user registration."
+
+msgid "flash##noprovider"
+msgstr "That user has no login method. Resend confirmation email so they can set a password."

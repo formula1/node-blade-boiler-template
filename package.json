@@ -72,7 +72,8 @@
     "fast-csv": ">=0.2.2",
     "prompt": ">=0.2.12",
     "queue-async": ">=1.0.7",
-    "express-device": ">=0.3.7"
+    "express-device": ">=0.3.7",
+    "i18next.gettext": "https://github.com/palamccc/i18next.gettext/archive/master.tar.gz"
   },
   "devDependencies": {
     "assert": "~1.1.1",

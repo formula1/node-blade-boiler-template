@@ -1,0 +1,133 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: node-gettext\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "button##login"
+msgstr "Login"
+
+msgid "button##register"
+msgstr "Register"
+
+msgid "button##email"
+msgstr "Email"
+
+msgid "button##password"
+msgstr "Password"
+
+msgid "button##save"
+msgstr "Save"
+
+msgid "button##continue"
+msgstr "Continue"
+
+msgid "button##federated-login"
+msgstr "Federated Login"
+
+msgid "button##reset-password-wrong"
+msgstr "Wrong confirm password"
+
+msgid "button##reset-password"
+msgstr "Reset password"
+
+msgid "button##remember-me"
+msgstr "Check this box if you don't have a password or you forgot it."
+
+msgid "button##create-new-account"
+msgstr "Create New Account"
+
+msgid "button##sign-in"
+msgstr "Sign in"
+
+msgid "button##user-update"
+msgstr "Update"
+
+msgid "button##user-loadmore"
+msgstr "Load More"
+
+msgid "button##user-create"
+msgstr "Add New User"
+
+msgid "button##user-filter"
+msgstr "Filter"
+
+msgid "button##user-updateall"
+msgstr "Update Selected"
+
+msgid "button##user-updateall-groups"
+msgstr "Update Group for Selected"
+
+msgid "button##user-resendall"
+msgstr "Re-send confirmation for Selected"
+
+msgid "ph##password"
+msgstr "Enter your password"
+
+msgid "ph##email"
+msgstr "Enter your email"
+
+msgid "ph##confirm"
+msgstr "Enter new password again"
+
+msgid "ph##old"
+msgstr "Enter your old password"
+
+msgid "ph##new"
+msgstr "Enter now password"
+
+msgid "ph##name"
+msgstr "Enter your name"
+
+msgid "ph##surname"
+msgstr "Enter your surname"
+
+msgid "ph##user-filter"
+msgstr "Search by email or name"
+
+msgid "ph##user-email"
+msgstr "email@domain.tld"
+
+msgid "ph##user-name"
+msgstr "Firstname"
+
+msgid "ph##user-surname"
+msgstr "Surname"
+
+msgid "option##email"
+msgstr "Email"
+
+msgid "option##name"
+msgstr "Name"
+
+msgid "option##state"
+msgstr "State"
+
+msgid "option##admin"
+msgstr "Administrator"
+
+msgid "option##member"
+msgstr "Member"
+
+msgid "option##reviewer"
+msgstr "Reviewer"
+
+msgid "option##guest"
+msgstr "Not verified"
+
+msgid "label##email"
+msgstr "Email"
+
+msgid "label##name"
+msgstr "Firstname"
+
+msgid "label##surname"
+msgstr "Lastname"
+
+msgid "label##groups"
+msgstr "Group"
+
+msgid "label##state"
+msgstr "State"

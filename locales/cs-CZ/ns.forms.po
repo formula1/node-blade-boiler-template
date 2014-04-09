@@ -1,0 +1,64 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: node-gettext\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "button##login"
+msgstr "Přihlásit"
+
+msgid "button##register"
+msgstr "Zaregistrovat"
+
+msgid "button##email"
+msgstr "Email"
+
+msgid "button##password"
+msgstr "Heslo"
+
+msgid "button##save"
+msgstr "Uložit"
+
+msgid "button##continue"
+msgstr "Pokračovat"
+
+msgid "button##federated-login"
+msgstr "Přihlásení jiným účtem"
+
+msgid "button##reset-password-wrong"
+msgstr "Nesprávné potvrzené heslo"
+
+msgid "button##reset-password"
+msgstr "Resetuj heslo"
+
+msgid "button##remember-me"
+msgstr "Zaškrtněte toto políčko pokud nemáte heslo nebo jste ho zapomněli."
+
+msgid "button##create-new-account"
+msgstr "Vytvořit nový účet"
+
+msgid "button##sign-in"
+msgstr "Zaregistrovat"
+
+msgid "ph##password"
+msgstr "Zadejte vaše heslo"
+
+msgid "ph##email"
+msgstr "Zadejte váš email"
+
+msgid "ph##confirm"
+msgstr "Zadejte znova vaše heslo"
+
+msgid "ph##old"
+msgstr "Zadejte vaše staré heslo"
+
+msgid "ph##new"
+msgstr "Zadejte nové heslo"
+
+msgid "ph##name"
+msgstr "Zadejte vaše meno"
+
+msgid "ph##surname"
+msgstr "Zadejte vaše přízvisko"

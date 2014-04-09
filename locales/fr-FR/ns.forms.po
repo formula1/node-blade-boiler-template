@@ -1,0 +1,19 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: node-gettext\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "button##login"
+msgstr "Se Connecter"
+
+msgid "button##remember-me"
+msgstr "Cochez cette case si vous n'avez pas un mot de passe ou vous l'avez oublié."
+
+msgid "ph##password"
+msgstr "Mot de passe"
+
+msgid "ph##email"
+msgstr "Adresse email"
