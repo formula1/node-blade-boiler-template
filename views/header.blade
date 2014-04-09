@@ -10,62 +10,27 @@ header
                         .alert.alert-info
                             =locals.messages.join(', ')
         section.top-bar-section
-            - if (!locals.user)
-                ul.right
-                    li.divider
-                    li.section.clearFix
-                        a(href="#") Contact
-                    li.section.clearFix
-                        a(href="#") Resouces
-                    li.divider
-                        li.section.clearFix
-                            a(href="#") Your Account
-                        li.section.clearFix
-                            a(href="#") Sign Out
-                    li.divider
-                    li.section.clearFix
-                        a.signInSignUp(href="#", data-reveal-id="loginModal") Login
-                    li.section.clearFix
-                        a.signInSignUp(href="#", data-reveal-id="loginModal") Become a Customer
-                    li.divider
-                    li.section.clearFix
-                        a(href="#") De
-                    li.section.clearFix
-                        a(href="#") It
-                    li.section.clearFix
-                        a(href="#") Es
-                    li.section.clearFix
-                        a(href="#") Fr
-                    li.section.clearFix
-                        a.chosen(href="#") En
-            - else
-                ul.right
-                    li.divider
-                    li.section.clearFix
-                        a(href="#") Contact
-                    li.section.clearFix
-                        a(href="#") Resouces
-                    li.divider
+            ul.right
+                li.divider
+                li.section.clearFix
+                    a(href="#") Contact
+                li.section.clearFix
+                    a(href="#") Resouces
+                li.divider
                     li.section.clearFix
                         a(href="#") Your Account
                     li.section.clearFix
                         a(href="#") Sign Out
-                    li.divider
+                li.divider
+                li.section.clearFix
+                    a.signInSignUp(href="#", data-reveal-id="loginModal") Login
+                li.section.clearFix
+                    a.signInSignUp(href="#", data-reveal-id="loginModal") Become a Customer
+                li.divider
+                - var langFile = locals.settings.languages
+                - for(var i in langFile)
                     li.section.clearFix
-                        a.signInSignUp(href="#", data-reveal-id="loginModal") Login
-                    li.section.clearFix
-                        a.signInSignUp(href="#", data-reveal-id="loginModal") Become a Customer
-                    li.divider
-                    li.section.clearFix
-                        a(href="#") De
-                    li.section.clearFix
-                        a(href="#") It
-                    li.section.clearFix
-                        a(href="#") Es
-                    li.section.clearFix
-                        a(href="#") Fr
-                    li.section.clearFix
-                        a.chosen(href="#") En
+                        a(href="/?setLng="+i)=t(langFile[i])
     nav.top-bar#header.clearFix.skrollable.skrollable-between(data-0="top:30px;" data-30="top:0px;")
         ul.title-area#title
             li.name#logoExtend.skrollable.skrollable-between(data-0="width:110px; height:106px", data-30="width:80px; height:76px", style="width: 110px;")
