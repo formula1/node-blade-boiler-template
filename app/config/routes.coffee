@@ -14,7 +14,7 @@ module.exports = (app) ->
   fs.readdirSync(process.cwd() + "/app/controllers").forEach (file) ->
     controller = file.split(".")[0]
     app.all "/#{controller}", (req, res, next) ->
-      routeMvc("#{controller}", "#{controller}", req, res, next)
+      routeMvc("#{controller}", "index", req, res, next)
   #   - _/**:controller**_  -> controllers/***:controller***/index method
   app.all "/:controller", (req, res, next) ->
     routeMvc(req.params.controller, "index", req, res, next)

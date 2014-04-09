@@ -9,11 +9,11 @@ fOCSchema = (settings)->
     that = this
     this.findOne query, (err, doc) ->
       if err
-        err.flight_mes = "r"
+        err.company_mes = "r"
         process.nextTick ()->
           next(err null)
       if doc
-        err = {flight_mes:"d"}
+        err = {company_mes:"d"}
         process.nextTick ()->
           next(err, doc)
       else
@@ -22,7 +22,7 @@ fOCSchema = (settings)->
         doc = new that to_save
         doc.save (err, doc) ->
           if err
-            err.flight_mes = "r"
+            err.company_mes = "r"
             process.nextTick ()->
               next(err, null)
           else
@@ -32,7 +32,7 @@ fOCSchema = (settings)->
     that = this
     this.findOne query, (err, doc) ->
       if err
-        err.flight_mes = "r"
+        err.company_mes = "r"
         process.nextTick ()->
           next(err,null)
       if doc
@@ -57,15 +57,15 @@ fOCSchema = (settings)->
           if(doc[k] == null || doc[k] == "")
             doc[k] = to_save[k]
           else
-            console.log("flight/models-40: cannot merge property");
+            console.log("company/models-40: cannot merge property");
         }
         `
         doc.save (err, doc)->
           if err
-            err.flight_mes = "r"
+            err.company_mes = "r"
             process.nextTick ()->
               next(err,null)
-          err = {flight_mes:"d"}
+          err = {company_mes:"d"}
           process.nextTick ()->
             next(err, doc)
 
@@ -75,7 +75,7 @@ fOCSchema = (settings)->
         doc = new that to_save
         doc.save (err, doc) ->
           if err
-            err.flight_mes = "r"
+            err.company_mes = "r"
             process.nextTick ()->
               next(err, null)
           else
@@ -105,12 +105,12 @@ sTopic = fOCSchema(
   name:
     type: String
     unique: true
-  companies: [{type: Schema.Types.ObjectId, ref:"flight_company"}]
+  companies: [{type: Schema.Types.ObjectId, ref:"company_company"}]
 )
 sTopic.post 'remove', (doc)->
   if(doc.companies.length > 0)
     for key, value of doc.companies
-      FlightCompany.update {_id: value}
+      companyCompany.update {_id: value}
       ,{ $pull: { license: doc._id } }
       ,(err)->
         if(err)
@@ -129,12 +129,12 @@ sLicense = fOCSchema(
   full_name:
     type: String
     unique: true
-  companies: [{type: Schema.Types.ObjectId, ref:"flight_company"}]
+  companies: [{type: Schema.Types.ObjectId, ref:"company_company"}]
 )
 sLicense.post 'remove', (doc)->
   if(doc.companies.length > 0)
     for key, value of doc.companies
-      FlightCompany.update {_id: value}
+      companyCompany.update {_id: value}
       ,{ $pull: { license: doc._id } }
       ,(err)->
         if(err)
@@ -150,10 +150,10 @@ sRegion = fOCSchema(
     required: true
   parent:
     type: Schema.Types.ObjectId
-    ref: "flight_region"
+    ref: "company_region"
     required: false
-  children: [{type: Schema.Types.ObjectId, ref:"flight_region"}]
-  addresses: [{type: Schema.Types.ObjectId, ref:"flight_address"}]
+  children: [{type: Schema.Types.ObjectId, ref:"company_region"}]
+  addresses: [{type: Schema.Types.ObjectId, ref:"company_address"}]
 )
 sRegion.post 'save', (doc)->
   if(doc.parent != null)
@@ -186,10 +186,10 @@ sRegion.post 'remove', (doc)->
           if(err)
             console.log('Address could not update'+err)
     else
-      console.log("Your Flight Database has a huge problem")
+      console.log("Your company Database has a huge problem")
 
 
-sFlightCompany = fOCSchema(
+scompanyCompany = fOCSchema(
   name:
     type: String
     unique: true
@@ -200,11 +200,11 @@ sFlightCompany = fOCSchema(
     type: String
     required: false
   topic: Schema.Types.ObjectId
-  license: [{type: Schema.Types.ObjectId, ref:"flight_license"}]
-  addresses: [{type: Schema.Types.ObjectId, ref:"flight_address"}]
-  users: [{type: Schema.Types.ObjectId, ref: "flight_user"}]
+  license: [{type: Schema.Types.ObjectId, ref:"company_license"}]
+  addresses: [{type: Schema.Types.ObjectId, ref:"company_address"}]
+  users: [{type: Schema.Types.ObjectId, ref: "company_user"}]
 )
-sFlightCompany.post 'save', (doc)->
+scompanyCompany.post 'save', (doc)->
   Topic.update { _id: doc.topic }
   ,{ $addToSet: { companies: doc._id } }
   ,(err)->
@@ -218,7 +218,7 @@ sFlightCompany.post 'save', (doc)->
         if(err)
           console.log("License could not update: "+err)
 
-sFlightCompany.post 'remove', (doc)->
+scompanyCompany.post 'remove', (doc)->
   Topic.update { _id: doc.topic }
   ,{ $pull: { companies: doc._id } }
   ,(err)->
@@ -244,12 +244,12 @@ sAddress = fOCSchema(
   email:
     type: String
     required: false
-  company: {type: Schema.Types.ObjectId, ref:"flight_company"}
-  region: {type: Schema.Types.ObjectId, ref:"flight_region"}
-  users: [{type: Schema.Types.ObjectId, ref:"flight_user"}]
+  company: {type: Schema.Types.ObjectId, ref:"company_company"}
+  region: {type: Schema.Types.ObjectId, ref:"company_region"}
+  users: [{type: Schema.Types.ObjectId, ref:"company_user"}]
 )
 sAddress.post 'save', (doc)->
-  FlightCompany.update { _id: doc.company }
+  companyCompany.update { _id: doc.company }
   ,{ $addToSet: { addresses: doc._id } }
   ,(err)->
     if(err)
@@ -260,7 +260,7 @@ sAddress.post 'save', (doc)->
     if(err)
       console.log("Region could not update: "+err)
 sAddress.post 'remove', (doc)->
-  FlightCompany.update { _id: doc.company }
+  companyCompany.update { _id: doc.company }
   ,{ $pull: { addresses: doc._id } }
   ,(err)->
     if(err)
@@ -281,11 +281,11 @@ sAddress.post 'remove', (doc)->
 sUser = fOCSchema(
   company:
     type: Schema.Types.ObjectId
-    ref: "flight_company"
+    ref: "company_company"
     required: true
   address:
     type: Schema.Types.ObjectId
-    ref: "flight_region"
+    ref: "company_region"
     required: true
   info:
     type: Schema.Types.ObjectId
@@ -297,13 +297,13 @@ sUser.post 'save', (doc)->
   ,(err)->
     if(err)
       console.log("Address could not update: "+err)
-  FlightCompany.update { _id: doc.company }
+  companyCompany.update { _id: doc.company }
   ,{ $addToSet: { users: doc._id } }
   ,(err)->
     if(err)
       console.log("Company could not update: "+err)
 sUser.post 'remove', (doc)->
-  FlightCompany.update { _id: doc.company }
+  companyCompany.update { _id: doc.company }
   ,{ $pull: { users: doc._id } }
   ,(err)->
     if(err)
@@ -314,16 +314,16 @@ sUser.post 'remove', (doc)->
     if(err)
       console.log("Address could not update: "+err)
 
-Topic = mongoose.model "flight_topic", sTopic
-License = mongoose.model "flight_license", sLicense
-FlightCompany = mongoose.model "flight_company", sFlightCompany
-Address = mongoose.model "flight_address", sAddress
-Region = mongoose.model "flight_region", sRegion
-User = mongoose.model "flight_user", sUser
+Topic = mongoose.model "company_topic", sTopic
+License = mongoose.model "company_license", sLicense
+companyCompany = mongoose.model "company", scompanyCompany
+Address = mongoose.model "company_address", sAddress
+Region = mongoose.model "company_region", sRegion
+User = mongoose.model "company_user", sUser
 module.exports =
   topic : Topic
   license : License
-  company : FlightCompany
+  company : companyCompany
   address : Address
   region : Region
   user : User
