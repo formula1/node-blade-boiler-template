@@ -1,0 +1,31 @@
+include "../layout.blade"
+replace block page
+    -var doc = locals.model.instance
+    -var title = doc[locals.model.model.getDocSlug()]
+    -var url = locals.model.utils.object2URL(doc)
+    h1=title
+    div
+        form(action=url+"/update")
+            ul
+                -for(var i in locals.model.model.schema.paths)
+                    -var temptitle = locals.model.model.getPretty(i)
+                    span=temptitle
+                    input(type="text" name=i value=doc[i])
+                    br
+    -if(locals.model.model.schema.methods.length > 0)
+        div
+            h3 Instance Methods
+            div.flight_sidebar.span4.accordian#flight_sidebar
+            -for(var i in locals.model.model.schema.methods)
+                div.accordian-group.sidebar_item
+                    div.accordian-heading
+                        a.accordian-toggle(data-toggle="collapse", data-parent="flight_sidebar", href="#collapse_"+i)= i
+                    div.accordian-body.collapse.in(id="collapse_"+i)
+                        div.accordian-inner
+                            form(action=url+"/"+i)
+                                -var args = locals.model.utils.getArgs(locals.model.model.schema.statics[i])
+                                foreach args as arg
+                                    label=arg
+                                    input(type="text" name=arg)
+                                    br
+                                input(type="submit")

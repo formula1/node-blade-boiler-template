@@ -1,4 +1,4 @@
-FMs = require "../models/flight/models"
+FMs = require "../models/company/models"
 formidable = require "formidable"
 config = require "../config/config"
 csv = require "fast-csv"
@@ -7,7 +7,7 @@ fs = require 'fs'
 
 
 
-engine.on 'join:/flight', (socket) ->
+engine.on 'join:/company', (socket) ->
   console.log("are we here?")
   throw new Error("stopping point")
   return unless socket.user?.groups is 'admin'
@@ -76,7 +76,7 @@ csv_file_handler =
       console.log JSON.stringify(user2files[username][filename])
       fs.unlink filepath, (err) ->
         if(err) 
-          console.log("controller/flight-81:"+err)
+          console.log("controller/company-81:"+err)
         else
           console.log 'deleted', file.path
     )
@@ -100,8 +100,6 @@ parse_row = (data, callback)->
     tf = {name:data.topic_name}
   else
     tf = {topic_id:data.topic_id}
-  # I should probably define my functions
-  # before I begin to avoid such callback hell
   
   # In case you didn't realize where you were, welcome to callback hell.
   # I could probably find out which object we are failing on to figure out what should be dealt with
@@ -111,7 +109,7 @@ parse_row = (data, callback)->
   , {topic_id:data.topic_id, name:data.topic_name}
   , (err, topic_a) ->
     if(err)
-      if(err.flight_mes == "d")
+      if(err.company_mes == "d")
         results.duplicates++
       else
         results.rejected++
@@ -140,7 +138,7 @@ parse_row = (data, callback)->
         , {full_name:temp,abr:abr,name:name}
         , (err, lic_a) ->
           if(err)
-            if(err.flight_mes == "d")
+            if(err.company_mes == "d")
               results.duplicates++
             else
               results.rejected++
@@ -160,7 +158,7 @@ parse_row = (data, callback)->
             , (null)
             , (err, region_a) ->
               if(err)
-                if(err.flight_mes == "d")
+                if(err.company_mes == "d")
                   results.duplicates++
                 else
                   results.rejected++
@@ -183,7 +181,7 @@ parse_row = (data, callback)->
             , temp
             , (err, cpy_a) ->
               if(err)
-                if(err.flight_mes == "d")
+                if(err.company_mes == "d")
                   results.duplicates++
                 else
                   results.rejected++
@@ -211,7 +209,7 @@ parse_row = (data, callback)->
               , temp
               , (err, add_a)->
                 if(err)
-                  if(err.flight_mes == "d")
+                  if(err.company_mes == "d")
                     results.duplicates++
                   else
                     results.rejected++
@@ -221,12 +219,12 @@ parse_row = (data, callback)->
         region_funk()
     lic_funk()
 
-# flight model's CRUD controller.
+# company model's CRUD controller.
 Route =
   # Lists all Companies
   index: (req, res) ->
     FMs.company.find {}, (err, companies) ->
-      res.render "flight/flight-template",
+      res.render "company/company-template",
         view : "index"
         user : req.user
         companies : companies
@@ -271,7 +269,7 @@ Route =
         .exec (err, companies) ->
           if(err) 
             console.log err
-          res.render "flight", {companies : companies, company_count:count}
+          res.render "company", {companies : companies, company_count:count}
 
   company: (req, res)->
     if !req.query.company
