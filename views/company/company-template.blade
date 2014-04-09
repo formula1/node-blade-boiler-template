@@ -5,15 +5,15 @@ replace block page
     -if(locals.company_id)
         ul.flight_menu.horizontal
             li
-                a(href='/flight/') Home
+                a(href='/company/') Home
             li
-                a(href='/flight/'+locals.company_id) Company Overview
+                a(href='/company/'+locals.company_id) Company Overview
             li
-                a(href='/flight/'+locals.company_id+'address') Addresses
+                a(href='/company/'+locals.company_id+'address') Addresses
             li
-                a(href='/flight/'+locals.company_id+'/users') Users
+                a(href='/company/'+locals.company_id+'/users') Users
             li
-                a(href='/flight/'+locals.company_id+'/orders') Orders
+                a(href='/company/'+locals.company_id+'/orders') Orders
     div.row-fluid
         div.flight_main.span8
             -var view = locals.view+".blade"
