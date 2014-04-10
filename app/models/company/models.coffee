@@ -105,7 +105,7 @@ sTopic = fOCSchema(
   name:
     type: String
     unique: true
-  companies: [{type: Schema.Types.ObjectId, ref:"company_company"}]
+  companies: [{type: Schema.Types.ObjectId, ref:"company"}]
 )
 sTopic.post 'remove', (doc)->
   if(doc.companies.length > 0)
@@ -129,7 +129,7 @@ sLicense = fOCSchema(
   full_name:
     type: String
     unique: true
-  companies: [{type: Schema.Types.ObjectId, ref:"company_company"}]
+  companies: [{type: Schema.Types.ObjectId, ref:"company"}]
 )
 sLicense.post 'remove', (doc)->
   if(doc.companies.length > 0)
@@ -244,7 +244,7 @@ sAddress = fOCSchema(
   email:
     type: String
     required: false
-  company: {type: Schema.Types.ObjectId, ref:"company_company"}
+  company: {type: Schema.Types.ObjectId, ref:"company"}
   region: {type: Schema.Types.ObjectId, ref:"company_region"}
   users: [{type: Schema.Types.ObjectId, ref:"company_user"}]
 )
@@ -281,7 +281,7 @@ sAddress.post 'remove', (doc)->
 sUser = fOCSchema(
   company:
     type: Schema.Types.ObjectId
-    ref: "company_company"
+    ref: "company"
     required: true
   address:
     type: Schema.Types.ObjectId

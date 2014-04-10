@@ -1,44 +1,46 @@
 include "../layout.blade"
+include "functions.blade"
 replace block page
     h1=locals.model.model.modelName
-    div
-        -if(locals.model.instances.length == 0)
-            p there doesnt seem to be any instances of this model
-        -else
-            h2 Instance List
-            table.table
-                thead
-                    tr
-                        td _id
-                        -var paths=[]
-                        -for(var i in locals.model.model.schema.paths)
-                            -if(i != "_id")
-                                td= locals.model.model.getPretty(i)
-                                -paths.push(i)
-                tbody
-                    foreach locals.model.instances as instance
-                        tr
-                            td
-                                -var url = locals.model.utils.object2URL(instance)
-                                a(href=url)= instance._id
-                            foreach paths as path
-                                -if(path != "_id")
+    p= JSON.stringify(locals.model.model.schema.paths)
+    div.row-fluid
+        div.span8
+            -if(locals.model.instances.length == 0)
+                p there doesnt seem to be any instances of this model
+            -else
+                h2 Instance List
+                form.form-inline(role="form")
+                    table.table.table-responsive
+                        -var docslug = locals.model.model.getDocSlug()
+                        thead
+                            tr
+                                td= locals.model.model.getPretty(docslug)
+                                -for(var i in locals.model.model.schema.paths)
+                                    -if(!i.match(docslug+"|_v"))
+                                        td= locals.model.model.getPretty(i)
+                        tbody
+                            foreach locals.model.instances as instance
+                                tr
                                     td
-                                        -var valued = instance[path]
-                                        input(type="text" name=path value=valued)
-    div
-        h3 Static Methods
-        div.flight_sidebar.span4.accordian#flight_sidebar
-        -for(var i in locals.model.model.schema.statics)
-            div.accordian-group.sidebar_item
-                div.accordian-heading
-                    a.accordian-toggle(data-toggle="collapse", data-parent="flight_sidebar", href="#collapse_"+i)= i
-                div.accordian-body.collapse.in(id="collapse_"+i)
-                    div.accordian-inner
-                        -var url = locals.model.utils.object2URL(locals.model.model)
-                        form(action=url+"/"+i)
-                            -var args = locals.model.utils.getArgs(locals.model.model.schema.statics[i]);
-                            foreach args as arg
-                                label=arg
-                                input(type="text" name=arg)
-                                br
+                                        -var url = locals.model.utils.object2URL(instance)
+                                        a(href=url)= instance[docslug]
+                                    -for(var path in locals.model.model.schema.paths)
+                                        -if(!path.match(docslug+"|_v"))
+                                            td
+                                                call path2Text(instance, locals.model.model.schema.paths[path])
+        div.span4
+            h3 Static Methods
+            -for(var i in locals.model.model.schema.statics)
+                -if(!i.match("getDocSlug|getPretty|validateUser"))
+                    div.accordian-group.sidebar_item
+                        div.accordian-heading
+                            a.accordian-toggle(data-toggle="collapse", data-parent="flight_sidebar", href="#collapse_"+i)= i
+                        div.accordian-body.collapse.in(id="collapse_"+i)
+                            div.accordian-inner
+                                -var url = locals.model.utils.object2URL(locals.model.model)
+                                form(action=url+"/"+i)
+                                    -var args = locals.model.utils.getArgs(locals.model.model.schema.statics[i]);
+                                    foreach args as arg
+                                        label=arg
+                                        input(type="text" name=arg)
+                                        br

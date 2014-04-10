@@ -31,8 +31,12 @@ formidable = require "formidable"
 fs = require "fs"
 logger = require "../utils/logger"
 csv = require "fast-csv"
-
-
+###
+    mongoose.connection.db.collectionNames(function (err, names) {
+        console.log(names); // [{ name: 'dbname.myCollection' }]
+        module.exports.Collection = names;
+    });
+###
 utils =
   object2URL: (object)->
     if(object instanceof mongoose.Document)
@@ -169,7 +173,18 @@ CRUD.req=(model, params, another, next)->
         ret_err.push err
         next ret_err, topass
         return
-      model.find topass, (err, instances)->
+      paths = model.schema.paths
+      to_pop = ""
+      for key, path of paths
+        if(key != "_id")
+          if(path.caster)
+            if(path.caster.instance == "ObjectID")
+              to_pop += path.path+" "
+          else if(path.instance == "ObjectID")
+            to_pop += path.path+" "
+      if(to_pop != "")
+        to_pop = to_pop.substring(0,to_pop.length-1)
+      model.find(topass).populate(to_pop).exec (err, instances)->
         if(err)
           ret_err.push err
           next ret_err, topass
