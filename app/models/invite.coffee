@@ -1,5 +1,5 @@
+###
 mongoose = require "mongoose"
-
 inviteSchema = new Schema
   email:
     type: String
@@ -34,3 +34,4 @@ inviteSchema.methods.send = ()->
 
 Invite = mongoose.model("Invite", inviteSchema)
 exports = module.exports = Invite
+###

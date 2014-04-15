@@ -6,7 +6,7 @@ fOCSchema = (settings)->
   ret = rmv(settings)
   console.log("TYPING"+typeof ret)
   ret.statics.findOrCreate = (query,to_save, next)->
-    that = this
+    model = this
     this.findOne query, (err, doc) ->
       if err
         err.company_mes = "r"
@@ -19,7 +19,7 @@ fOCSchema = (settings)->
       else
         if(to_save == null)
           to_save = query
-        doc = new that to_save
+        doc = new model to_save
         doc.save (err, doc) ->
           if err
             err.company_mes = "r"
@@ -29,35 +29,30 @@ fOCSchema = (settings)->
             process.nextTick ()->
               next(null, doc)
   ret.statics.mergeOrCreate = (query,to_save, next)->
-    that = this
+    model = this
     this.findOne query, (err, doc) ->
       if err
         err.company_mes = "r"
         process.nextTick ()->
-          next(err,null)
       if doc
+        console.log "found doc"
+        settings = model.schema.paths
         `
-        for(var k in settings){
-          if(typeof settings[k] == "array"){
-            var dc = 0;
-            for(k2 in to_save[k]){
-              var tempbool = true;
-              for(var i=0;i<dc;i++)
-                if(doc[k][i] == to_save[k][k2]){
-                  tempbool = false;
-                  break;
-                }
-              if(tempbool)
-                doc[k].push(to_save[k][k2]);
-            }
-            continue;
-          }
+        for(var k in model.schema.paths){
           if(!to_save[k]) continue;
-          if(doc[k] == to_save[k]) continue
-          if(doc[k] == null || doc[k] == "")
+          else if(doc[k] == null || doc[k] == "" || doc[k] == [])
             doc[k] = to_save[k]
-          else
-            console.log("company/models-40: cannot merge property");
+          else if(settings[k].caster){
+            doc[k].addToSet.apply(doc[k], to_save[k]);
+          }
+          else if(typeof doc[k] == "string" && typeof to_save[k] == "string" && doc[k].valueOf() == to_save[k].valueOf())
+            continue
+          else if(doc[k].toString().valueOf() == to_save[k].toString().valueOf())
+            continue
+          else{
+            console.log(model.modelName+" cannot merge property: "+k+"(init:"+doc[k]+", tosave:"+to_save[k]+")");
+            next("company/models-40: cannot merge property"+k,null)
+          }
         }
         `
         doc.save (err, doc)->
@@ -72,7 +67,7 @@ fOCSchema = (settings)->
       else
         if(to_save == null)
           to_save = query
-        doc = new that to_save
+        doc = new model to_save
         doc.save (err, doc) ->
           if err
             err.company_mes = "r"
@@ -81,16 +76,6 @@ fOCSchema = (settings)->
           else
             process.nextTick ()->
               next(err, doc)
-  ret.statics.autocomplete = (search, field, limit, next)->
-    that = this
-    if typeof limit != "object"
-      limit = {}
-    limit[field] = new RegExp('^'+search, 'gi')
-    this.find limit, field+" _id", (err, doc)->
-      if err
-        next err
-      else
-        next null, doc
   return ret
 
 
@@ -109,7 +94,7 @@ sTopic = fOCSchema(
 )
 sTopic.post 'remove', (doc)->
   if(doc.companies.length > 0)
-    for key, value of doc.companies
+    for value in doc.companies
       companyCompany.update {_id: value}
       ,{ $pull: { license: doc._id } }
       ,(err)->
@@ -119,10 +104,7 @@ sTopic.post 'remove', (doc)->
 sLicense = fOCSchema(
   abr:
     type: String
-    unique: (true)
-  #reference_num: for now reference numbers are dead
-  #  type: String
-  #  unique: true
+    unique: true
   name:
     type: String
     unique: true
@@ -133,7 +115,7 @@ sLicense = fOCSchema(
 )
 sLicense.post 'remove', (doc)->
   if(doc.companies.length > 0)
-    for key, value of doc.companies
+    for value in doc.companies
       companyCompany.update {_id: value}
       ,{ $pull: { license: doc._id } }
       ,(err)->
@@ -171,7 +153,7 @@ sRegion.post 'remove', (doc)->
       if(err)
         console.log('Region Parent could not update'+err)
   if(doc.children.length > 0)
-    for key, value of doc.children
+    for value in doc.children
       Region.update {_id: value}
       , { $set: { parent: doc.parent } }
       , (err)->
@@ -179,7 +161,7 @@ sRegion.post 'remove', (doc)->
           console.log('Child could not update'+err)
   if(doc.addresses.length > 0)
     if(doc.parent != null)
-      for key, value of doc.addresses
+      for value in doc.addresses
         Region.update {_id: value}
         , { $set: { parent: doc.parent } }
         , (err)->
@@ -211,7 +193,7 @@ scompanyCompany.post 'save', (doc)->
     if(err)
       console.log("Topic could not update: "+err)
   if(doc.license.length > 0)
-    for key, value of doc.license
+    for value in doc.license
       License.update {_id: value}
       ,{ $addToSet: { companies: doc._id } }
       ,(err)->
@@ -225,7 +207,7 @@ scompanyCompany.post 'remove', (doc)->
     if(err)
       console.log("Topic could not update: "+err)
   if(doc.license.length > 0)
-    for key, value of doc.license
+    for value in doc.license
       License.update {_id: value}
       ,{ $pull: { companies: doc._id } }
       ,(err)->
@@ -236,7 +218,7 @@ sAddress = fOCSchema(
   address: String
   post_code: String
   telephone_number:
-    type: Number
+    type: String
     required:false
   fax_number:
     type: String
@@ -247,6 +229,7 @@ sAddress = fOCSchema(
   company: {type: Schema.Types.ObjectId, ref:"company"}
   region: {type: Schema.Types.ObjectId, ref:"company_region"}
   users: [{type: Schema.Types.ObjectId, ref:"company_user"}]
+  docSlug: "address"
 )
 sAddress.post 'save', (doc)->
   companyCompany.update { _id: doc.company }
@@ -271,7 +254,7 @@ sAddress.post 'remove', (doc)->
     if(err)
       console.log("Region could not update: "+err)
   if(doc.user.length > 0)
-    for key, value of doc.user
+    for value in doc.user
       User.update {_id: value}
       ,{ $pull: { companies: doc._id } }
       ,(err)->
@@ -279,6 +262,7 @@ sAddress.post 'remove', (doc)->
           console.log("Company Member could not update: "+err)
 
 sUser = fOCSchema(
+  name: String
   company:
     type: Schema.Types.ObjectId
     ref: "company"

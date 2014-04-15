@@ -2,7 +2,8 @@ include "sidebar-item.blade"
 render sidebar_title("CSV uploads")
 replace sidebar_content
     script(type='text/javascript', src='/js/uploads-generic.js')
-    form#flight_csv_upload_form(method='post', action='/company/upload?_csrf='+locals.csrf_token, enctype='multipart/form-data', role='form')
+    -var csrf = encodeURIComponent(locals.csrf_token)
+    form#flight_csv_upload_form(method='post', action='/company/upload?_csrf='+csrf, enctype='multipart/form-data', role='form')
         div.form-group
             label(for="csv_uploader") CSV File
             input.form-control#csv_uploader(name='file', type='file', required)
@@ -16,5 +17,5 @@ replace sidebar_content
                     :nl2br
                         #{locals.uploads[i].total}/#{locals.uploads[i].max} rows finished
                         #{locals.uploads[i].objects_per_row} objects per row
-                        #{locals.uploads[i].duplicates} objects avoided duplication
+                        #{locals.uploads[i].duplicant} objects avoided duplication
                         #{locals.uploads[i].rejected} objects rejected

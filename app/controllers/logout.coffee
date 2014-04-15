@@ -1,4 +1,4 @@
-exports.logout = (req, res) ->
+exports.index = (req, res) ->
   if req.user
     if req.signedCookies.logintoken
       cookie = JSON.parse(req.signedCookies.logintoken)

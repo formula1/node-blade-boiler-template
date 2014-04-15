@@ -1,46 +1,55 @@
 include "../layout.blade"
-include "functions.blade"
+include "includes/functions.blade"
 replace block page
     h1=locals.model.model.modelName
     p= JSON.stringify(locals.model.model.schema.paths)
     div.row-fluid
         div.span8
+            include "includes/searchform.blade"
             -if(locals.model.instances.length == 0)
-                p there doesnt seem to be any instances of this model
+                p Theres nothing available
             -else
                 h2 Instance List
                 form.form-inline(role="form")
                     table.table.table-responsive
-                        -var docslug = locals.model.model.getDocSlug()
+                        -var docslug = locals.model.model._getDocSlug()
                         thead
                             tr
-                                td= locals.model.model.getPretty(docslug)
+                                td= locals.model.model._getPrettyKey(docslug)
                                 -for(var i in locals.model.model.schema.paths)
-                                    -if(!i.match(docslug+"|_v"))
-                                        td= locals.model.model.getPretty(i)
+                                    -if(!i.match(docslug+"|^_"))
+                                        td= locals.model.model._getPrettyKey(i)
                         tbody
                             foreach locals.model.instances as instance
                                 tr
                                     td
                                         -var url = locals.model.utils.object2URL(instance)
-                                        a(href=url)= instance[docslug]
+                                        a(href=url)= locals.model.model._alterPathValue(instance,docslug,instance[docslug])
                                     -for(var path in locals.model.model.schema.paths)
-                                        -if(!path.match(docslug+"|_v"))
+                                        -if(!path.match(docslug+"|^_"))
                                             td
                                                 call path2Text(instance, locals.model.model.schema.paths[path])
         div.span4
             h3 Static Methods
-            -for(var i in locals.model.model.schema.statics)
-                -if(!i.match("getDocSlug|getPretty|validateUser"))
-                    div.accordian-group.sidebar_item
-                        div.accordian-heading
-                            a.accordian-toggle(data-toggle="collapse", data-parent="flight_sidebar", href="#collapse_"+i)= i
-                        div.accordian-body.collapse.in(id="collapse_"+i)
-                            div.accordian-inner
-                                -var url = locals.model.utils.object2URL(locals.model.model)
-                                form(action=url+"/"+i)
-                                    -var args = locals.model.utils.getArgs(locals.model.model.schema.statics[i]);
-                                    foreach args as arg
-                                        label=arg
-                                        input(type="text" name=arg)
-                                        br
+            -var sidebarid = (locals.model.model.modelName+"-statics").replace("_", "-")
+            -var first = "in"
+            div.panel-group.accordian-group(id=sidebarid)
+                -for(var i in locals.model.model.schema.statics)
+                    -if(!i.match("^_"))
+                        div.panel.panel-default.sidebar_item
+                            div.panel-heading
+                                h4.panel-title
+                                    a.panel-toggle(data-toggle="collapse", data-parent="#"+sidebarid, href="#collapse_"+i)= i
+                            div.panel-collapse.collapse(id="collapse_"+i, class=first)
+                                div.panel-body
+                                    -var url = locals.model.utils.object2URL(locals.model.model)
+                                    form(action=url+"/"+i)
+                                        -var args = locals.model.utils.getArgs(locals.model.model.schema.statics[i]);
+                                        -for(var j = 0;j<args.length;j++)
+                                            -var arg = args[j]
+                                            -if(arg == "next")
+                                                -continue
+                                            label=arg
+                                            input(type="text" name=arg)
+                                            br
+                        -first = ""

@@ -16,13 +16,29 @@ csv = require "fast-csv"
 
 # User model's CRUD controller.
 Route =
+#HandleAble
   # Lists all users
   index: (req, res) ->
     # FIXME set permissions to see this - only admins
     if req.user and req.user.groups is 'admin'
       User.find {}, (err, users) ->
         res.send users
+###
+_sendMail
+options=
+  template: "reset"
+  subject: "reseting your password"
+  to:
+    name: user.name
+    surname: user.surname
+    email: user.email
+data =
+  link: config.APP.hostname + action + user.tokenString
+linkinfo = req.i18n.t('ns.msg:flash.activationlink') + "."
 
+is a layer for Emailer with addiional info for rendering
+-This can be considered a static method
+###
   _sendMail: (req, res, options, data, linkinfo) ->
     console.log("sending message to: ", options.to.email)
     mailer = new Emailer(options, data)
@@ -38,6 +54,37 @@ Route =
         req.flash('info', req.i18n.t('ns.msg:flash.sendererror') + ".")
         res.redirect "index"
 
+###
+deletes req.body.remember_me which is slightly significant
+-Need to find out where else remember_me is used
+
+static.create
+Validation should be checked mongoose side
+Lack of parameters will be checked by us
+-if user exsists
+  ResetLogin Attempts
+  Send Email
+    -if active-with link to reset password
+    -if innactive-with link to activate
+-else
+  Register user
+            -Await confirm should be default true
+            -Validator Check should be done mongoose side
+            -Errors should not be returned as string
+            -We are checking twice for an existing user
+            -save is finally called
+    -if success
+      Send Email-with link to activate
+    -else
+      Return to index
+This has a callback which is means its a sub request
+      
+      
+create(params, conflict(previous_doc), callback(err))
+
+conflict 
+
+###
   # Creates new user with data from `req.body`
   # Or reset his password and send link to email
   create: (req, res, next) ->
@@ -123,37 +170,72 @@ Route =
       console.log("req.body is empty")
       res.statusCode = 400
       res.redirect("index")
+
+###
+instance.activate
+User.activate
+-gets by token string
+-where active = false (this can not to worry as I'm sure people would like to know whether or not they've activated)
+  -if token expired
+    callback expired
+  -active = true
+  -awaitConfirm = false (awaitConfirm and active may be redundant)
+  -groups = member
+  -provider = provider.push local
+  -save
+    -err
+      save error
+    callback user
+  
+callback
+  if err
+    -certian errors get spoken
+  if user (which is always true as there isn't an error)
+    -if active
+        -success
+    -else
+      already activated
+    
+    
+###      
   activate: (req, res, next) ->
     console.log "activate"
     User.activate req.params.id, (err, user) ->
       console.log('end of activate')
       unless err
-        if user
-          console.log 'activate. user', user
-          if user.active is true
-            req.logIn user, (err) ->
-              console.log('login err') if err
-              next(err)  if err
-              req.flash('info', 'Activation success')
-              res.redirect "user/resetpassword/" + user.tokenString
-          else
-            res.statusCode = 400
-            req.flash('info', req.i18n.t('ns.msg:flash.alreadyactivated'))
-            res.redirect "index"
+        console.log 'activate. user', user
+        if user.active is true
+          req.logIn user, (err) ->
+            console.log('login err') if err
+            next(err)  if err
+            req.flash('info', 'Activation success')
+            res.redirect "user/resetpassword/" + user.tokenString
         else
           res.statusCode = 400
-          req.flash('info', req.i18n.t('ns.msg:flash.tokenexpires'))
+          req.flash('info', req.i18n.t('ns.msg:flash.alreadyactivated'))
           res.redirect "index"
       else if err is "token-expired-or-user-active"
         console.log "token-expired-or-user-active"
         res.statusCode = 403
         req.flash('info', req.i18n.t('ns.msg:flash.tokenexpires'))
         res.redirect "index"
+###
+method.resetpassword(id)
+checking if we have a tokenString
+  -error- expire
+findOne
+  -if err-expired
+      if(user)
+        req.logIn(user) #this is strange
+          -render reset with tokens and etc
+      else
+        no token
+
+###
   resetpassword: (req, res) ->
     console.log 'resetpass'
     console.log(req.params.id)
     if req.params.id?
-
       User.findOne {tokenString: req.params.id}, (err,user)->
         unless err
           if user
@@ -179,6 +261,24 @@ Route =
       res.statusCode = 403
       req.flash('info', req.i18n.t('ns.msg:flash.tokenexpires'))
       res.redirect "index"
+      
+      
+  ###
+  changepassword(next means its being used elsewhere)
+  if(has paramters and password succeeds validation)
+  find user by req.body.token
+    if(user)
+      password = new pass
+      login attempts = 0
+      lockUntil = 0
+      provider push local unless its in local
+      delete await confirm
+      user.save
+        if(err) err
+        req.login user
+    else err
+  
+  ###
   changepassword: (req, res,next) ->
     console.log 'changepassword'
     console.log(req.body)
@@ -217,6 +317,16 @@ Route =
       res.render "/user/resetpassword",
         token: req.body.token
         user: req.user
+###
+get
+  if session.passport
+    get by passport
+  else if req params id
+    findById
+  else
+    nothing
+
+###
   get: (req, res) ->
     logger.info "controller start", logCat
     if req.session.passport.user?
@@ -242,6 +352,19 @@ Route =
       res.statusCode = 403
       req.flash('info', req.i18n.t('ns.msg:flash.unauthorized'))
       res.redirect "index"
+###
+update
+  -if wont update non valid params
+  -find the user
+    -if password is < 6
+      -try to just save the new names
+  -won't update if new password isn't confirmed
+  -compare Password
+    -compares through bcrypt
+      -match-set pas, set names if have em
+      -save
+        -return
+###
   # Updates user with data from `req.body`
   update: (req, res) ->
     if req.body.name.length >= 3 or req.body.password_old.length >= 6 or req.body.surname.length >= 3
@@ -309,6 +432,11 @@ Route =
       res.redirect '/user/get'
       #res.statusCode = 400
       console.log("body is not valid")
+###
+delete
+  User.remove
+
+###
   # Deletes user by id
   delete: (req, res) ->
     User.remove {_id: req.params.id}, (err, ok) ->
@@ -316,6 +444,26 @@ Route =
         req.flash('info', req.i18n.t('ns.msg:flash.userdeleted'))
         res.redirect '/user/get'
         res.statusCode = 400
+###
+login (next means its used in other functions as well)
+
+Next is determined by Express
+
+if req.isAuthenticated() #have no idea what to expect from this
+  -send them back with no worries
+else
+  -if body emain
+    -test email
+      -passport authenticate
+        -if user
+          -req.logIn #again I don't know......
+            -if success-send em back
+            -else inactive
+        -else non exsistant
+      -else next
+          
+
+###
   login: (req, res, next) ->
     console.log 'authenticate'
     if req.isAuthenticated()

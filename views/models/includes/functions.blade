@@ -1,0 +1,254 @@
+function addRegExVal(formname, regex)
+    script(type="text/javascript")
+        |!
+            jQuery(function($){
+            $("[name=#{formname}]").change(function(e){
+            that = $(this).parent();
+            var field_value = that.attr("value");
+            if(field_value == ""){
+            that.removeClass("has-warning");
+            that.removeClass("has-success");
+            }else if(!field_value.match(new RegExp("#{regex}"))){
+            that.addClass("has-warning");
+            that.removeClass("has-success");
+            }else{
+            that.removeClass("has-warning");
+            that.addClass("has-success");
+            }
+            })
+            })
+            
+function addAutoCompleteId(unique,path,valued)
+    -var pathname = path.path
+    -if(pathname == locals.model.model._getDocSlug())
+        -childmodel = locals.model.model
+    -else
+        -childmodel = locals.model.utils.string2Model(path.options.ref)
+    
+    -if(valued == "")
+        -valued = ""
+    -else
+        -valued = valued[childmodel._getDocSlug()]
+    input.form-control(type="text", name=unique+pathname, data-provide="typeahead", autocomplete="off", value=valued)
+    script(type="text/javascript")
+        |!
+            jQuery(function($){
+            if(typeof window.autocomplete_results == "undefined") window.autocomplete_results = {};
+            window.autocomplete_results.item_#{unique+pathname} = [];
+            $("[name=#{unique+pathname}]").typeahead({source:
+            function(query, process){
+            query = encodeURIComponent(query);
+            $.ajax("/model/#{childmodel.modelName}/autocomplete?path=#{childmodel._getDocSlug()}&value="+query)
+            .done(function(data){
+            console.log(data);
+            data_array = []
+            for(var i in data)
+            data_array[data_array.length] = data[i].#{childmodel._getDocSlug()};
+            console.log(data_array);
+            window.autocomplete_results.item_#{unique+pathname} = data_array;
+            process(window.autocomplete_results.item_#{unique+pathname});
+            });
+            process(window.autocomplete_results.item_#{unique+pathname});
+            }
+            });
+            });
+
+function addAutoCompleteTag(unique,path,valued)
+    -var pathname = path.path
+    -if(pathname == locals.model.model._getDocSlug())
+        -childmodel = locals.model.model
+    -else
+        -childmodel = locals.model.utils.string2Model(path.caster.options.ref)
+    
+    -if(valued == "")
+        -valued = ""
+    -else
+        -valued = valued[childmodel._getDocSlug()]
+    input.form-control(type="text", name=unique+pathname, data-provide="typeahead", autocomplete="off", value=valued)
+    script(type="text/javascript")
+        |!
+            jQuery(function($){
+            $('[name=#{unique+pathname}]').tagsinput({
+            typeahead: {
+            source: function(query){
+            query = encodeURIComponent(query);
+            var array_def = $.Deferred();
+            $.ajax("/model/#{childmodel.modelName}/autocomplete?path=#{childmodel._getDocSlug()}&value="+query).done(function(data){
+            console.log(data);
+            data_array = []
+            for(var i in data){
+            console.log(typeof data[i].#{childmodel._getDocSlug()});
+            data_array.push( data[i].#{childmodel._getDocSlug()});
+            }
+            console.log(data_array);
+            array_def.resolve(data_array);
+            });
+            return array_def.promise()
+            },
+            freeInput: false
+            }
+            })
+            });
+
+
+function handleArrayForm(unique,pathval,valued)
+    -if(pathval.caster.instance == "ObjectID" || model._getDocSlug() == pathname)
+        call addAutoCompleteTag(unique,pathval,valued)
+    -else if(pathval.instance == "String")
+        -if(pathval.enumValues.length > 0)
+            script(type="text/javascript")
+                |!
+                    jQuery(function($){
+                    $('[name=#{unique+pathname}]').tagsinput({
+                    typeahead: {
+                    source:#{pathval.enumValues}
+                    freeInput: false
+                    });
+        -else if(pathval.regExp != null)
+            input(name=unique+pathname type="text" value="" data-role="tagsinput")
+            span.glyphicon.glyphicon-ok.form-control-feedback
+            |!
+                jQuery(function($){
+                $('[name=#{unique+pathname}]').tagsinput({
+                typeahead: {
+                source:function(query){
+                if(query.match(new RegExp("#{regex}")))
+                return query;
+                }
+                freeInput: false
+                });
+        -else
+            input(name=unique+pathname type="text" value="" data-role="tagsinput")
+    -else if(pathval.instance == "Number")
+        input(name=unique+pathname type="text" value="" data-role="tagsinput")
+        span.glyphicon.glyphicon-ok.form-control-feedback
+        |!
+            jQuery(function($){
+            $('[name=#{unique+pathname}]').tagsinput({
+            typeahead: {
+            source:function(query){
+            if(query.match(new RegExp("[0-9]+")))
+            return query;
+            }
+            freeInput: false
+            });
+    -else if(pathval.instance == "Date")
+        input(name=unique+pathname type="text" value="" data-role="tagsinput")
+        span.glyphicon.glyphicon-ok.form-control-feedback
+        |!
+            jQuery(function($){
+            $('[name=#{unique+pathname}]').tagsinput({
+            typeahead: {
+            source:function(query){
+            var rgx = "^(?=\d)(?:(?:31(?!.(?:0?[2469]|11))|(?:30|29)(?!.0?2)|29(?=.0?2.(?:(?:(?:1[6-9]|[2-9]\d)";
+            rgx += "?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))(?:\x20|$))|(?:2[0-8]|1\d|0?[1-9]))"
+            rgx += "([-./])(?:1[012]|0?[1-9])\1(?:1[6-9]|[2-9]\d)?\d\d(?:(?=\x20\d)\x20|$))?(((0?[1-9]|1[012])(:[0-5]\d){0,2}"
+            rgx +="(\x20[AP]M))|([01]\d|2[0-3])(:[0-5]\d){1,2})?$";
+            if(query.match(new RegExp(rgx)))
+            return query;
+            }
+            freeInput: false
+            });
+        input(type="datetime-local" name=unique+pathname value=valued)
+    -else if(pathval.instance == "Boolean")
+        input(name=unique+pathname type="text" value="" data-role="tagsinput")
+        span.glyphicon.glyphicon-ok.form-control-feedback
+        |!
+            jQuery(function($){
+            $('[name=#{unique+pathname}]').tagsinput({
+            typeahead: {
+            source:function(query){
+            if(query.match(new RegExp("true|false")))
+            return query;
+            }
+            freeInput: false
+            });
+
+/**
+        input.form-control(type="text" list=instance._id+pathname+"_list" name=instance._id+pathname)
+        datalist(id=instance._id+pathname+"_list")
+            -for(var j=0;j<pathval.length;j++)
+                option(value="Internet Explorer")
+        </datalist> 
+*/
+function path2Text(instance, path)
+    -var valued = instance[path.path]
+    -var pathval = path
+    -var pathname = pathval.path
+    -if(pathval.caster)
+        -if(valued.length > 0)
+            div.dropdown
+                button.btn.dropdown-toggle.sr-only(type="button" id="dropdownMenu1" data-toggle="dropdown") View Items
+                    span.caret
+                ul.dropdown-menu(role="menu" aria-labelledby="dropdownMenu1")
+                    -for(var i=0;i<valued.length;i++)
+                        li(role="presentation")
+                            -if(pathval.caster.instance == "String")
+                                -var set_href = ""
+                                -var set_text = valued[i]
+                            -else if(pathval.caster.instance == "ObjectID")
+                                -var childmodel = valued[i].model(valued[i].constructor.modelName);
+                                -var set_href=locals.model.utils.object2URL(valued[i])
+                                -var set_text = valued[i][childmodel._getDocSlug()]
+                            -else if(pathval.instance == "Number")
+                                -var set_href = ""
+                                -var set_text = valued[i]
+                            -else if(pathval.instance == "Date")
+                                -var set_href = ""
+                                -var set_text = valued[i]
+                            -else if(pathval.instance == "Boolean")
+                                -var set_href = ""
+                                -var set_text = valued[i]
+                            a(role="menuitem" tabindex="-1" href=set_href)=set_text
+        -else
+            = "none"
+    -else if(pathval.instance == "String")
+        = valued
+    -else if(pathval.instance == "ObjectID")
+        -if(instance[pathname] == null)
+            = "none"
+        -else
+            -var childmodel = instance[pathname].model(instance[pathname].constructor.modelName)
+            -var set_href = locals.model.utils.object2URL(instance[pathname])
+            -var set_text = instance[pathname][childmodel._getDocSlug()]
+            a(href=set_href)= set_text
+    -else if(pathval.instance == "Number")
+        = valued
+    -else if(pathval.instance == "Date")
+        = valued
+    -else if(pathval.instance == "Boolean")
+        = valued
+function path2Input(model, path, valued, unique)
+    -if(!unique)
+        -unique = ""
+    -var pathval = path
+    -var pathname = pathval.path
+    -if(pathval.caster)
+        //-we have an array
+        call handleArrayForm(unique, path,valued)
+    -else if(pathval.instance == "ObjectID" || model._getDocSlug() == pathname)
+        call addAutoCompleteId(unique,path,valued)
+    -else if(pathval.instance == "String")
+        -if(pathval.enumValues.length > 0)
+            select.form-control
+                -for(var j=0;j<pathval.enumValues.length;j++)
+                    option= pathval.enumValues[j]
+        -else if(pathval.regExp != null)
+            div.form-group
+                input.form-control(type="text" name=unique+pathname, value=valued)
+                span.glyphicon.glyphicon-ok.form-control-feedback
+                call addRegExVal(unique+pathname, pathval.regExp)
+        -else
+            input.form-control(type="text" name=unique+pathname value=valued)
+    -else if(pathval.instance == "Number")
+        div.form-group
+            input.form-control(type="text" name=unique+pathname, value=valued)
+            span.glyphicon.glyphicon-ok.form-control-feedback
+            call addRegExVal(unique+pathname, "[0-9]+")
+    -else if(pathval.instance == "Date")
+        input(type="datetime-local" name=unique+pathname value=valued)
+    -else if(pathval.instance == "Boolean")
+        label.checkbox-inline
+            input(type="checkbox" name=unique+pathname value=valued)
+    -else
+        p= pathval.instance

@@ -27,12 +27,8 @@ user2socket = {}
 user2files = {}
 csv_file_handler =
   prep: (req, name, file)->
-    console.log "FILE TYPE"+file.type
     nari = file.name.split(".")
-    console.log file.type is "text/plain"
-    console.log nari.length > 1
-    console.log "csv" == nari[1]
-    if file.type is "text/plain" && nari.length > 1 && "csv" == nari[1]
+    if nari.length > 1 && ("csv" == nari[nari.length-1] || (nari.length > 2 && nari[nari.length-2] == "csv"))
       if(!user2files[req.user.name])
         user2files[req.user.name] = {}
       user2files[req.user.name][file.name] =
@@ -49,6 +45,7 @@ csv_file_handler =
   handlePart: (req, part)->
     if !user2files[req.user.name] || !user2files[req.user.name][part.filename]
       return
+    part = part.toString()
     user2files[req.user.name][part.filename].max += part.split("\n").length
   upload: (req, file, row_handler)->
     error = (false)
@@ -56,37 +53,68 @@ csv_file_handler =
     username = req.user.name
     filename = file.name
     filepath = file.path
-    csv.fromPath(filepath, {headers:true}).on("record", (data)->
-      row_handler data, (err, results)->
-        if(err)
-          if user2socket[username]
-            user2socket[username].send \
-            JSON.stringify({app:"CSV-uploader",error:err})
-        user2files[username][filename].rejected += results.rejected
-        user2files[username][filename].duplicant += results.duplicant
-        user2files[username][filename].added += results.added
-        user2files[username][filename].object_per_row = \
-        results.objects_per_row
-        user2files[username][filename].total++
-        if user2socket[username]
-          user2socket[username].send \
-          JSON.stringify({app:"CSV-uploader", data:user2files[username][filename]})
-      
-    ).on("end", ()->
-      console.log JSON.stringify(user2files[username][filename])
-      fs.unlink filepath, (err) ->
+    `
+    var currently_in_process = false;
+    var rows_in_memory = [];
+    var counter = 0;
+    csvstream = csv.fromPath(filepath, {headers:true}).on("record", function(data){
+      function row_singularity(process) {
+        var temp = rows_in_memory.pop();
+        console.log(temp);
+        process(temp, function() {
+          if (rows_in_memory.length === 0) {
+            currently_in_process = false;
+            csvstream.resume();
+            counter++;
+          } else {
+            row_singularity(process);
+          }
+        });
+      };
+      rows_in_memory.push(data);
+      if (!currently_in_process) {
+        console.log("process");
+        currently_in_process = true;
+        csvstream.pause();
+        row_singularity(function(row, next){
+          row_handler( data, function(err, results){
+            if(err){
+              throw new Error(err);
+              if(user2socket[username]){
+                req.flash('info', JSON.stringify(err));
+                user2socket[username].send(JSON.stringify({app:"CSV-uploader",error:err}));
+              }
+            }
+            user2files[username][filename].rejected += results.rejected;
+            user2files[username][filename].duplicant += results.duplicant;
+            user2files[username][filename].added += results.added;
+            user2files[username][filename].object_per_row = results.objects_per_row;
+            user2files[username][filename].total++;
+            if(user2socket[username]){
+              user2socket[username].send(JSON.stringify({app:"CSV-uploader", data:user2files[username][filename]}));
+            }
+            process.nextTick(next);
+          });
+        });
+      } else {
+        console.log("only in memory");
+      }
+    }).on("end", function(){
+      console.log(JSON.stringify(user2files[username][filename]));
+      fs.unlink(filepath, function(err){
         if(err) 
           console.log("controller/company-81:"+err)
         else
-          console.log 'deleted', file.path
-    )
-
+          console.log('deleted', file.path)
+      })
+    });
+    `
+    console.log "Async"
 parse_row = (data, callback)->
-  console.log "PARSING!!!"
   results =
     rejected:0
     duplicant:0
-    addes:0
+    added:0
     objects_per_row : 8
   topic = 0
   lic = []
@@ -112,11 +140,16 @@ parse_row = (data, callback)->
       if(err.company_mes == "d")
         results.duplicates++
       else
+        console.log tf
         results.rejected++
         callback(err, results)
         return
     topic = topic_a._id
-    lics = data.licences.split "\n"
+    if(data.licences)
+      lics = data.licences.split "\n"
+    else
+      lics = []
+    lic = []
     lic_funk = ()->
       if lics.length > 0
         temp = lics.pop()
@@ -125,7 +158,7 @@ parse_row = (data, callback)->
           process.nextTick(lic_funk)
           return
         parts = temp.split "("
-        name = parts[0].substring(0,parts[0].length-2)
+        name = parts[0].substring(0,parts[0].length-1)
         parts = parts[1].split ")"
         abr = parts[0]
         refnum = parts[1].substring(1)
@@ -168,7 +201,7 @@ parse_row = (data, callback)->
                 rgn = region_a._id
               else
                 parent = region_a._id
-              region_funk()
+              process.nextTick region_funk
           else if(topic != 0)
             temp =
               name: data.company_name
@@ -177,7 +210,7 @@ parse_row = (data, callback)->
               license: lic
               logo_url: data.logo_URL
             FMs.company.mergeOrCreate {name: data.company_name, \
-            topic: topic._id}
+            topic: topic}
             , temp
             , (err, cpy_a) ->
               if(err)
@@ -216,8 +249,8 @@ parse_row = (data, callback)->
                     callback(err, results)
                     return
                 callback(null,results)
-        region_funk()
-    lic_funk()
+        process.nextTick region_funk
+    process.nextTick lic_funk
 
 # company model's CRUD controller.
 Route =
@@ -248,7 +281,8 @@ Route =
           console.log 'rejected', part.name, part.filename
           return
         if(scboo) 
-          csv_file_handler.handlePart req, part
+          process.nextTick ()->
+            csv_file_handler.handlePart req, part
         form.handlePart(part)
         return
       form.parse req, (err, fields, files) ->

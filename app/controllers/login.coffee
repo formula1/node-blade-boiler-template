@@ -3,7 +3,7 @@
   #console.log (_csrf: req.csrfToken())
   #console.log 'REQ.BODY!!!!!!!!!!!!!!!!!',req.body
   #res.render "user/login", _csrf: req.csrfToken()
-exports.login = (req, res, next) ->
+exports.index = (req, res, next) ->
   console.log "LOGIN"
   if req.isAuthenticated()
     next()
