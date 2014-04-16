@@ -8,6 +8,12 @@ module.exports = (settings) ->
   tvalidateUser = (req, instance, method, next) ->
     next(true)
 
+  if(settings.userAssociated)
+    uA = settings.userAssociated
+    delete settings.userAssociated
+  else
+    uA = false
+    
   if settings.alterPathValue
     tgetalter = setting.alterPathValue
     delete setting.alterPathValue
@@ -23,6 +29,13 @@ module.exports = (settings) ->
   if settings.getPrettyKey
     tgetPretty = settings.getPrettyKey
     delete settings.getPrettyKey
+  if settings.instanceToDocSlug
+    i2docslug = settings.instanceToDocSlug
+    delete settings.instanceToDocSlug
+  else
+    i2docslug = (doc)->
+      return
+      
   if settings.docSlug
     tdocSlug = settings.docSlug
     delete settings.docSlug
@@ -44,6 +57,8 @@ module.exports = (settings) ->
   ret.static("_validateRequest", tvalidateUser)
   ret.method "_getModel", ()->
     this.model(this.constructor.modelName)
+  ret.static "_userAssociated", ()->
+    return uA
   ret.static "autocomplete", (path,value,next)->
     search = {}
     ret_err = []

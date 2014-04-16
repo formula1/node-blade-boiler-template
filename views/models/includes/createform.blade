@@ -1,0 +1,22 @@
+include "functions.blade"
+function getCreateForm(form_version, model)
+    -if(!model)
+        -var model = locals.model.model
+    -var csrf = encodeURIComponent(locals.csrf_token)
+    -var mname = model.modelName
+    -var pmn = model._getPrettyKey(model.modelName)
+    -var dslug = model._getDocSlug()
+    div.createform
+        h2= "Create "+pmn
+        form(id="create_"+mname, method='GET', action="/model/"+mname+'/create?_csrf='+csrf, role='form')
+        -if(form_version == "table")
+            -for(var i in model.schema.paths)
+                -if(!i.match("^_"))
+                    div.input-group
+                        -var temptitle = model._getPrettyKey(i)
+                        label.input-group-addon= temptitle
+                        call path2Input(model, model.schema.paths[i], "")
+        -else if(form_version == "inline")
+            p Inline
+        -else if(form_version == "horizontal")
+            p Horizontal

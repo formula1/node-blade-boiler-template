@@ -1,6 +1,5 @@
 include "../layout.blade"
 replace block page
-    include "specific/LoginRequest"
     h1 Available Models
     table.table.table-responsive
         -if(locals.model.models.length > 0)

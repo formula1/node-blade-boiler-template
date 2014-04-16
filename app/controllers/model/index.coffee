@@ -23,13 +23,14 @@
 ###
 
 mongoose = require "mongoose"
-User = require "../models/user/user"
 formidable = require "formidable"
 fs = require "fs"
-logger = require "../utils/logger"
+logger = require "../../utils/logger"
 urlparse = require "url"
 csv = require "fast-csv"
+plugins = require "../../config/plugins.coffee"
 
+plugins.initiateFilter("preRender")
 boo = (true)
 if(boo)
   console.log("here")
@@ -44,163 +45,32 @@ if(boo)
       else
         require path+"/"+file
   checker(process.cwd()+"/app/models")
-  boo = false
-
-
+  boo = (false)
+models = {}
+models_array = []
+modelNames = mongoose.modelNames()
+console.log(modelNames)
+for modelname in modelNames
+  models[modelname] = mongoose.model(modelname)
+  models_array.push models[modelname]
 ###
     mongoose.connection.db.collectionNames(function (err, names) {
         console.log(names); // [{ name: 'dbname.myCollection' }]
         module.exports.Collection = names;
     });
 ###
-utils =
-  object2URL: (object)->
-    if(object instanceof mongoose.Document)
-      model = mongoose.model(object.constructor.modelName)
-      return "/model/"+model.modelName+"/"+object[model._getDocSlug()]+"/"
-    else if(object.modelName)
-      return "/model/"+object.modelName
-  getArgs: (func)->
-    fnStr = func.toString()
-    fnStr = fnStr.replace(/\/\*.+?\*\/|\/\/.*(?=[\n\r])/g, '');
-    result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')'))\
-    .match(/([^\s,]+)/g)
-    if(result == null)
-      result = []
-    return result
-  string2Model: (name)->
-    mongoose.model(name)
+utils = require "./utils.coffee"
 
+for key, value of utils
+  console.log(key)
 
 user_validation = (model, req, next)->
   model._validateRequest req, next
 
 
-parse_params = ( model, params, next)->
-  #I should also make it validate path types
-  #or not at all, we will see...
-  required = model.schema.requiredPaths()
-  topass = {}
-  for key, value of params
-    if model.pathType(key) == "virtual"
-      continue
-    else if model.pathType(key) == "adhocOrUndefined"
-      continue
-    else if model.pathType(key) == "nested"
-      console.log "we're not ready for this yet"
-      continue
-    else if model.pathType(key) == "real"
-      if(required.indexOf(key) == -1)
-        topass[key] = value
-      else if(value != "")
-        required.splice(required.indexOf(key), 1)
-  if(required.length > 0)
-    if(!err)
-      err = []
-    for key, value of required
-      err.push {name:value, message:"Missing a required value:"+value}
-  process.nextTick ()->
-    next(err, topass)
-
-req_parse_params = (model, params, next)->
-  #I should also make it validate path types
-  #or not at all, we will see...
-  indexes = model.schema.indexes()
-  paths = model.schema.paths
-  si = []
-  toRegex = []
-  toLoose = []
-  err = []
-  to_return = {}
-  #Check for Regex Properties
-  if(params["regex"])
-    try
-      toRegex = JSON.parse value
-    catch
-      err.push
-        name:"Regex"
-        message: "The Regex Parameter is not Properly Formatted"
-  #Check for loose
-  if params["loose"]
-    try
-      toLoose = JSON.parse value
-    catch error
-      err.push
-        name:"Loose"
-        message: "The Loose Parameter is not properly formatted"
-  if(params.hasOwnProperty("sort"))
-    if(paths.hasOwnProperty(params["sort"]))
-      to_return._sort = params["sort"];
-    else
-      err.push
-        name:"Sort"
-        message: "Can't sort by a nonexistant property"
-      to_return._sort = model._getDocSlug()
-  else
-    to_return._sort = model._getDocSlug()
-
-
-  if(params.hasOwnProperty("page"))
-    if(params["page"].match(/[0-9]/))
-      to_return._page = params["page"]
-    else
-      err.push
-        name:"Page"
-        message: "the page must be a number"
-      to_return._page = "0"
-  else 
-    to_return._page = "0"
-
-  console.log(params);
-  if(params["ipp"])
-    if(params["ipp"].match(/[0-9]/))
-      to_return._ipp = params["ipp"]
-    else
-      err.push
-        name:"Ipp"
-        message: "Items Per Page must be a number"
-      to_return._ipp = "10"
-  else
-    to_return._ipp = "10"
-    
-  for key, value of paths
-    if(params.hasOwnProperty(key))
-      to_return[key] = decodeURIComponent(params[key])
-  for key in toRegex
-    try
-      to_return[key] = new RegExp(decodeURIComponent(params[key]))
-      temp = si.indexOf(key)
-      if(temp != -1)
-        si.splice(temp,1)
-    catch error
-      err.push
-        name:"Regex"
-        message: "Improperly formatted Regex"
-  for key of toLoose
-    try
-      to_return[key] = new RegExp("*"+decodeURIComponent(params[key])+"*")
-      temp = si.indexOf(key)
-      if(temp != -1)
-        si.splice(temp,1)
-    catch error
-      err.push
-        name:"Regex"
-        message: "Improperly formatted Regex"
-#  if(si.length == 0)
-#    err.push {name:value, message:"You should search by an index:"+value}
-  console.log to_return
-  if err.length == 0
-    err = (undefined)
-  process.nextTick ()->
-    next(err, to_return)
-  #Class
-  #-Create Instance
-  #-Search and Request|Update|Delete
-  #-(Static Methods)
-
 CRUD = {}
 CRUD.create=(model, params, next)->
-  parse_params model, params, (err, topass)->
+  utils.parse_params model, params, (err, topass)->
     ret_err = []
     if(err)
       ret_err.push err
@@ -223,7 +93,7 @@ CRUD.search=(model, params, another, next)->
     # additionally need sort parameter
     # Also need pagination
     ret_err = []
-    req_parse_params model, params, (err, topass)->
+    utils.req_parse_params model, params, (err, topass)->
       if(err)
         ret_err.push err
         next ret_err, topass
@@ -260,7 +130,7 @@ CRUD.search=(model, params, another, next)->
   else if(another.toUpperCase() == "delete")
     # need to consider if they are just IDS
     #I'm not going to pass a regex to search for IDs, thats rediculous
-    req_parse_params model, params, (err, topass)->
+    utils.req_parse_params model, params, (err, topass)->
       if(err)
         ret_err.push err
         next ret_err, topass
@@ -274,7 +144,7 @@ CRUD.search=(model, params, another, next)->
         next ret_err, {params:topass, docs:instances}
   else if(another.toUpperCase() == "update")
     # need to consider if they are just IDS
-    req_parse_params model, params, (err, topass)->
+    utils.req_parse_params model, params, (err, topass)->
       if(err)
         ret_err.push err
         next ret_err, topass
@@ -291,38 +161,62 @@ CRUD.update = ()->
 CRUD.delete = ()->
   return
 
-CRUD.method = (doc, method,query, next)->
+CRUD.method = (req,res,doc, method,query, next)->
   argsnames = utils.getArgs(doc[method])
   argvalues = []
   ret_err = []
   for name in argsnames
     if(query[name])
       argvalues.push query[name]
-    else if(name.match(/next|cb|callback/))
+    else if(name.match(/req|request|res|response|next|cb|callback/))
       continue
     else
       ret_err.push { message:"need all arguments for the method: "+method}
       next ret_err, argvalues
       return
+  if(argsnames[1].match(/res|response/))
+    argvalues.unshift res
+  if(argsnames[0].match(/req|request/))
+    argvalues.unshift req
   if(argsnames[argsnames.length-1].match(/next|cb|callback/))
     argvalues.push (errors, data, render)->
       if(errors)
-        for err in errors
-          ret_err.push err
+        if(Object.prototype.toString.call( errors ) == '[object Array]')
+          ret_err.concat errors
+        else 
+          ret_err.push errors
         next ret_err, argvalues, render
         return
       next(null,data, render)
   doc[method].apply(doc, argvalues)
   
+Render = (path, req, res)->
+  for key, value of res.locals.model.models
+    console.log(key)
 
-renderClass = (model, code, path)->
+  modelcounter = 0;
+  assoc_model = ()->
+    if(modelcounter == models_array.length)
+      plugins.emit "preRender", req, res, (err_arr,req, res)->
+        for errored in err_arr
+          req.flash 'info'
+          , req.i18n.t('ns.msg:flash.dberr') + errored.message
+        res.locals.user = req.user
+        res.render(path)
+    else if(models_array[modelcounter]._userAssociated && models_array[modelcounter]._userAssociated())
+      models_array[modelcounter].findOne({user:req.user._id})\
+      .populate("*").exec (err,doc)->
+        if(err)
+          console.log(err)
+        if(doc)
+          req.user[models_array[modelcounter].modelName] = doc
+        modelcounter++
+        assoc_model()
+    else
+      modelcounter++
+      assoc_model()
+  assoc_model()
   
-  res.statusCode = code
-  res.render(path)
-  return
-
-renderInstance = ()->
-  return
 
 # User model's CRUD controller.
 Route =
@@ -330,6 +224,7 @@ Route =
   index: (req, res) ->
     res.locals.model = {}
     res.locals.model.utils = utils
+    res.locals.model.models_ref = models
     names = mongoose.modelNames()
     to_export = []
     to_count = []
@@ -357,12 +252,13 @@ Route =
       else
         res.locals.model.models = to_export
         res.locals.model.count = to_count
-        res.render "models/index"
+        Render "models/index", req,res
         return
     db_funk()
 
   all:  (req, res) ->
     res.locals.model = {}
+    res.locals.model.models = models
     res.locals.model.utils = utils
     patharray = urlparse.parse(req.originalUrl).pathname.split "/"
     patharray.splice 0,1
@@ -405,12 +301,12 @@ Route =
             console.log JSON.stringify(err)
             res.locals.model.request = ret
             res.locals.model.instances = []
-            res.render("models/model")
+            Render("models/model", req,res)
             return
           res.locals.model.request = params
           res.locals.model.instances = ret.docs
           console.log("DOCS"+ret.docs.length)
-          res.render("models/model")
+          Render("models/model",req,res)
       else if(patharray.length < 4)
         if(patharray[2].indexOf("search") == 0)
           another = patharray[2].split "-"
@@ -425,11 +321,11 @@ Route =
                 , req.i18n.t('ns.msg:flash.dberr') + err.message
               res.locals.model.request = ret
               res.locals.model.instances = []
-              res.render("models/model")
+              Render("models/model",req,res)
               return
             res.locals.model.request = ret.params
             res.locals.model.instances = ret.docs
-            res.render("models/model")
+            Render("models/model",req,res)
         else if(patharray[2] == "create")
           CRUD.create model, params, (err, ret)->
             if(err)
@@ -437,7 +333,7 @@ Route =
                 req.flash 'info'
                 , req.i18n.t('ns.msg:flash.dberr') + err.message
               res.locals.model.form.tocreate = ret
-              res.render("models/model")
+              Render("models/model",req,res)
               return
             res.locals.model.instance = ret
             res.locals.model.schema = model.schema
@@ -455,7 +351,7 @@ Route =
             if(key.match("^_"))
               continue
             if(patharray[2] == key)
-              CRUD.method model,key,params, (err, data,renderType)->
+              CRUD.method req,res,model,key,params, (err, data,renderType)->
                 console.log(err)
                 console.log(data)
                 console.log(renderType)
@@ -463,9 +359,9 @@ Route =
                   if(err)
                     for key, value of err
                       req.flash 'info'
-                      , req.i18n.t('ns.msg:flash.dberr') + err
+                      , req.i18n.t('ns.msg:flash.dberr') + value
                   res.locals.model[key] = data
-                  res.render("models/model")
+                  Render("models/model",req,res)
                   return
                 else if(renderType.toUpperCase() == "JSON")
                   if(err)
@@ -478,7 +374,7 @@ Route =
                       req.flash 'info'
                       , req.i18n.t('ns.msg:flash.dberr') + err
                   res.locals.model[key] = data
-                  res.render(data.path)
+                  Render(data.path,req,res)
               return
           req.flash 'info'
           , "Non Exsistant Method in Model "+model.modelName
@@ -487,49 +383,49 @@ Route =
           res.redirect(utils.object2URL(model))
       else
         find = {}
-        find[model._getDocSlug()] = patharray[2]
+        find[model._getDocSlug()] = decodeURIComponent(patharray[2])
         model.find find, (err,docs)->
           if(err)
             req.flash('info', req.i18n.t('ns.msg:flash.dberr') + err)
             res.model = model
-            res.render("models/model")
+            res.redirect(utils.object2URL(model))
           if(docs.length == 0)
             req.flash 'info'
             , req.i18n.t('ns.msg:flash.dberr')\
             + "this "+model.modelName+" does not exist"
             res.statusCode = 404
-            res.render("models/model")
+            res.redirect(utils.object2URL(model))
           doc = docs[0]
           res.locals.model.instance = doc
           if(!patharray[3] || patharray[3] = "")
-            res.render("models/instance")
+            Render("models/instance",req,res)
           else if(patharray[3] == "update")
           else if(patharray[3] == "delete")
           else
             schema = model.schema
             for key, value of schema.methods
               if(patharray[3] == key)
-                CRUD.method doc,key,params, (err, data)->
+                CRUD.method req,res,doc,key,params, (err, data)->
                   if(err)
                     for key, value of err
                       req.flash 'info'
                       , req.i18n.t('ns.msg:flash.dberr') + err
                     res.locals.model.forms[key].args = ret
-                    res.render("models/instance")
+                    Render("models/instance",req,res)
                     return
                   if(!renderType)
                     res.locals.model[key] = data
-                    res.render("models/instance")
+                    Render("models/instance",req,res)
                   if(renderType.toUpperCase() == "JSON")
                       res.json(data)
                   if(renderType.toUpperCase() == "PATH")
                     res.locals.model[key] = data
-                    res.render(data.path)
+                    Render(data.path,req,res)
                 return
             req.flash 'info'
             , req.i18n.t('ns.msg:flash.dberr')\
             + "This method does not exist"
             res.statusCode = 404
-            res.render("models/instance")
+            Render("models/instance",req,res)
 Route.model = Route.index
 module.exports = Route

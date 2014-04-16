@@ -18,10 +18,13 @@ function addRegExVal(formname, regex)
             })
             })
             
-function addAutoCompleteId(unique,path,valued)
+function addAutoCompleteId(model,unique,path,valued)
     -var pathname = path.path
-    -if(pathname == locals.model.model._getDocSlug())
-        -childmodel = locals.model.model
+    -console.log(model.modelName)
+    -console.log(path.path)
+    -console.log(path)
+    -if(pathname == model._getDocSlug())
+        -childmodel = model
     -else
         -childmodel = locals.model.utils.string2Model(path.options.ref)
     
@@ -53,10 +56,10 @@ function addAutoCompleteId(unique,path,valued)
             });
             });
 
-function addAutoCompleteTag(unique,path,valued)
+function addAutoCompleteTag(model,unique,path,valued)
     -var pathname = path.path
-    -if(pathname == locals.model.model._getDocSlug())
-        -childmodel = locals.model.model
+    -if(pathname == model._getDocSlug())
+        -childmodel = model
     -else
         -childmodel = locals.model.utils.string2Model(path.caster.options.ref)
     
@@ -91,9 +94,9 @@ function addAutoCompleteTag(unique,path,valued)
             });
 
 
-function handleArrayForm(unique,pathval,valued)
+function handleArrayForm(model,unique,pathval,valued)
     -if(pathval.caster.instance == "ObjectID" || model._getDocSlug() == pathname)
-        call addAutoCompleteTag(unique,pathval,valued)
+        call addAutoCompleteTag(model,unique,pathval,valued)
     -else if(pathval.instance == "String")
         -if(pathval.enumValues.length > 0)
             script(type="text/javascript")
@@ -225,9 +228,9 @@ function path2Input(model, path, valued, unique)
     -var pathname = pathval.path
     -if(pathval.caster)
         //-we have an array
-        call handleArrayForm(unique, path,valued)
+        call handleArrayForm(model,unique, path,valued)
     -else if(pathval.instance == "ObjectID" || model._getDocSlug() == pathname)
-        call addAutoCompleteId(unique,path,valued)
+        call addAutoCompleteId(model,unique,path,valued)
     -else if(pathval.instance == "String")
         -if(pathval.enumValues.length > 0)
             select.form-control

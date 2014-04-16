@@ -51,7 +51,7 @@ fOCSchema = (settings)->
             continue
           else{
             console.log(model.modelName+" cannot merge property: "+k+"(init:"+doc[k]+", tosave:"+to_save[k]+")");
-            next("company/models-40: cannot merge property"+k,null)
+            next("company/models-40: cannot merge property"+k,null);
           }
         }
         `
@@ -89,7 +89,7 @@ sTopic = fOCSchema(
     unique: (true)
   name:
     type: String
-    unique: true
+    unique: (true)
   companies: [{type: Schema.Types.ObjectId, ref:"company"}]
 )
 sTopic.post 'remove', (doc)->
@@ -181,10 +181,10 @@ scompanyCompany = fOCSchema(
   logo_url:
     type: String
     required: false
-  topic: Schema.Types.ObjectId
+  topic: {type:Schema.Types.ObjectId, ref: "company_topic", required:false}
   license: [{type: Schema.Types.ObjectId, ref:"company_license"}]
   addresses: [{type: Schema.Types.ObjectId, ref:"company_address"}]
-  users: [{type: Schema.Types.ObjectId, ref: "company_user"}]
+  users: [{type: Schema.Types.ObjectId, ref: "company_id"}]
 )
 scompanyCompany.post 'save', (doc)->
   Topic.update { _id: doc.topic }
@@ -228,7 +228,7 @@ sAddress = fOCSchema(
     required: false
   company: {type: Schema.Types.ObjectId, ref:"company"}
   region: {type: Schema.Types.ObjectId, ref:"company_region"}
-  users: [{type: Schema.Types.ObjectId, ref:"company_user"}]
+  users: [{type: Schema.Types.ObjectId, ref:"company_id"}]
   docSlug: "address"
 )
 sAddress.post 'save', (doc)->
@@ -253,28 +253,81 @@ sAddress.post 'remove', (doc)->
   ,(err)->
     if(err)
       console.log("Region could not update: "+err)
-  if(doc.user.length > 0)
-    for value in doc.user
-      User.update {_id: value}
-      ,{ $pull: { companies: doc._id } }
+  if(doc.users.length > 0)
+    for value in doc.users
+      sUser.update {_id: value}
+      ,{ $set: { company: null, address: null, permission:"guest"} }
       ,(err)->
         if(err)
           console.log("Company Member could not update: "+err)
 
 sUser = fOCSchema(
-  name: String
+  permission:
+    type: String
+    enum: ["admin", "manager", "employee", "guest"]
+    default: "guest"
   company:
     type: Schema.Types.ObjectId
     ref: "company"
-    required: true
+    required: false
   address:
     type: Schema.Types.ObjectId
-    ref: "company_region"
-    required: true
-  info:
-    type: Schema.Types.ObjectId
+    ref: "company_address"
     required: false
+  user:
+    type: Schema.Types.ObjectId
+    ref: "User"
+    required: true
+    unique: true
+  name:
+    type: String
+  activated:
+    type:Boolean
+    default:(false)
+  userAssociated: (true)
 )
+
+sUser.static "activate", (req,res,next)->
+  user = req.user
+  company_id = this
+  company_id.findOne {user:user._id}, (err,doc)->
+    if(err)
+      console.log(err)
+    else if(doc && doc.activated)
+      next("You have already Activated")
+    else if(doc && !doc.activated)
+      doc.activated = (true)
+      doc.name = user.name
+      doc.save (err)->
+        if(err)
+          next(err)
+        else
+          next()
+    else
+      doc = new company_id({user:user._id,name:user.name,activated:true})
+      doc.save (err)->
+        if(err)
+          next(err)
+        else
+          next()
+        
+      
+
+sUser.pre "save", (next)->
+  if(!this.user)
+    next("Need a User")
+  SiteUser = mongoose.model("User")
+  SiteUser.findOne {_id:this.user}, (err,user)->
+    if(err)
+      next(err)
+    if(!user)
+      next("This user does not Exist")
+    else
+      this.name = user.name+" "+user.surname
+      next()
+
+
+
 sUser.post 'save', (doc)->
   Address.update { _id: doc.address }
   ,{ $addToSet: { users: doc._id } }
@@ -303,7 +356,7 @@ License = mongoose.model "company_license", sLicense
 companyCompany = mongoose.model "company", scompanyCompany
 Address = mongoose.model "company_address", sAddress
 Region = mongoose.model "company_region", sRegion
-User = mongoose.model "company_user", sUser
+User = mongoose.model "company_id", sUser
 module.exports =
   topic : Topic
   license : License

@@ -1,23 +1,26 @@
 include "functions.blade"
--var csrf = encodeURIComponent(locals.csrf_token)
-div.searchform
-    -var mname = locals.model.model.modelName
-    -var pmn = locals.model.model._getPrettyKey(locals.model.model.modelName)
-    -var dslug = locals.model.model._getDocSlug()
-    h2= "Search "+pmn
-    div.row
-        form#search(method='GET', action="/model/"+mname+'/search?_csrf='+csrf, role='form')
-            div.input-group
-                call path2Input(locals.model.model, locals.model.model.schema.paths[dslug], "")
-                span.input-group-btn
-                    button.btn.btn-default(type="submit") Search
-    button.btn(data-toggle="collapse" data-target="#advanced-search") Advanced Search
-    div.collapse#advanced-search
-        form#more-search(method='GET', action="/model/"+mname+'/search?_csrf='+csrf, role='form')
-            -for(var i in locals.model.model.schema.paths)
-                -if(!i.match("^_"))
-                    div.input-group
-                        -var temptitle = locals.model.model._getPrettyKey(i)
-                        label.input-group-addon= temptitle
-                        call path2Input(locals.model.model, locals.model.model.schema.paths[i], "")
-            button.btn.btn-default(type="submit") Search
+function getSearchForm(model)
+    -if(!model)
+        -var model = locals.model.model;
+    -var csrf = encodeURIComponent(locals.csrf_token)
+    div.searchform
+        -var mname = model.modelName
+        -var pmn = model._getPrettyKey(model.modelName)
+        -var dslug = model._getDocSlug()
+        h2= "Search "+pmn
+        div.row
+            form#search(method='GET', action="/model/"+mname+'/search?_csrf='+csrf, role='form')
+                div.input-group
+                    call path2Input(model, model.schema.paths[dslug], "")
+                    span.input-group-btn
+                        button.btn.btn-default(type="submit") Search
+        button.btn(data-toggle="collapse" data-target="#advanced-search") Advanced Search
+        div.collapse#advanced-search
+            form#more-search(method='GET', action="/model/"+mname+'/search?_csrf='+csrf, role='form')
+                -for(var i in model.schema.paths)
+                    -if(!i.match("^_"))
+                        div.input-group
+                            -var temptitle = model._getPrettyKey(i)
+                            label.input-group-addon= temptitle
+                            call path2Input(model, model.schema.paths[i], "")
+                button.btn.btn-default(type="submit") Search
