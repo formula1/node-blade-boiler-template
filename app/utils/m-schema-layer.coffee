@@ -50,6 +50,8 @@ module.exports = (settings) ->
   ret.static "_getDocSlug", ->
     tdocSlug
 
+  ret.method "_createHook", (req,res,next)->
+    next()
   ret.static("_alterPathValue", tgetalter)
   ret.static("_pathDescriptions", tgetdes)
   ret.static("_alterPathValue", tgetalter)

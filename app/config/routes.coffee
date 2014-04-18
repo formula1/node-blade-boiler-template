@@ -5,12 +5,12 @@
 # We are using method names to determine controller actions for clearness.
 ###
 fs = require 'fs'
-
+authentication = require "../authentication"
 module.exports = (app) ->
-
   #   - _/_ -> controllers/index/index method
   app.all "/", (req, res, next) ->
     routeMvc("index", "index", req, res, next)
+  authentication.routes(app)
   fs.readdirSync(process.cwd() + "/app/controllers").forEach (file) ->
     controller = file.split(".")[0]
     app.all "/#{controller}", (req, res, next) ->
@@ -36,11 +36,8 @@ module.exports = (app) ->
     else
       res.send 'User-agent: *\nDisallow: /'
   # If all else failed, show 404 page
-  app.all "/*", (req, res) ->
-    console.warn "error 404: ", req.url
-    req.flash('info', '404!')
-    res.status(404)
-    res.render '404', { user: req.user }
+  app.all "*", (req, res) ->
+    res.status(404).render '404'
 
 # render the page based on controller name, method and id
 routeMvc = (controllerName, methodName, req, res, next) ->

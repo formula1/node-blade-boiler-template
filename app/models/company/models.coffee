@@ -5,7 +5,7 @@ rmv = require "../../utils/m-schema-layer.coffee"
 fOCSchema = (settings)->
   ret = rmv(settings)
   console.log("TYPING"+typeof ret)
-  ret.statics.findOrCreate = (query,to_save, next)->
+  ret.statics._findOrCreate = (query,to_save, next)->
     model = this
     this.findOne query, (err, doc) ->
       if err
@@ -28,7 +28,7 @@ fOCSchema = (settings)->
           else
             process.nextTick ()->
               next(null, doc)
-  ret.statics.mergeOrCreate = (query,to_save, next)->
+  ret.statics._mergeOrCreate = (query,to_save, next)->
     model = this
     this.findOne query, (err, doc) ->
       if err
@@ -175,6 +175,7 @@ scompanyCompany = fOCSchema(
   name:
     type: String
     unique: true
+    required: true
   url:
     type: String
     required: false
@@ -186,12 +187,31 @@ scompanyCompany = fOCSchema(
   addresses: [{type: Schema.Types.ObjectId, ref:"company_address"}]
   users: [{type: Schema.Types.ObjectId, ref: "company_id"}]
 )
-scompanyCompany.post 'save', (doc)->
-  Topic.update { _id: doc.topic }
-  ,{ $addToSet: { companies: doc._id } }
-  ,(err)->
+scompanyCompany.method "_createHook", (req, res, next)->
+  the_company = this
+  User.findOne {user:req.user._id}, (err, company_id)->
     if(err)
-      console.log("Topic could not update: "+err)
+      console.log(err)
+      next(err)
+    else if(!company_id)
+      console.log("could not find this user")
+      next("could not find this user")
+    else
+      company_id.company = the_company._id
+      company_id.role = "admin"
+      company_id.save (err)->
+        if(err)
+          next(err)
+        next()
+
+scompanyCompany.post 'save', (doc)->
+  console.log(doc.topic)
+  if(doc.topic)
+    Topic.update { _id: doc.topic }
+    ,{ $addToSet: { companies: doc._id } }
+    ,(err)->
+      if(err)
+        console.log("Topic could not update: "+err)
   if(doc.license.length > 0)
     for value in doc.license
       License.update {_id: value}
@@ -215,8 +235,12 @@ scompanyCompany.post 'remove', (doc)->
           console.log("License could not update: "+err)
 
 sAddress = fOCSchema(
-  address: String
-  post_code: String
+  address: 
+    type: String
+    required: true
+  post_code: 
+    type: String
+    required: true
   telephone_number:
     type: String
     required:false
@@ -226,8 +250,8 @@ sAddress = fOCSchema(
   email:
     type: String
     required: false
-  company: {type: Schema.Types.ObjectId, ref:"company"}
-  region: {type: Schema.Types.ObjectId, ref:"company_region"}
+  company: {type: Schema.Types.ObjectId, ref:"company", required: true}
+  region: {type: Schema.Types.ObjectId, ref:"company_region", required: true}
   users: [{type: Schema.Types.ObjectId, ref:"company_id"}]
   docSlug: "address"
 )

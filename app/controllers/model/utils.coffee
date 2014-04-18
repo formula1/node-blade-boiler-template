@@ -20,26 +20,19 @@ module.exports =
   parse_params: ( model, params, next)->
     #I should also make it validate path types
     #or not at all, we will see...
-    required = model.schema.requiredPaths()
+    schema = model.schema
+    required = schema.requiredPaths()
     topass = {}
-    for key, value of params
-      if model.pathType(key) == "virtual"
+    err = []
+    for key, value of schema.paths
+      if(key.match("^_"))
         continue
-      else if model.pathType(key) == "adhocOrUndefined"
-        continue
-      else if model.pathType(key) == "nested"
-        console.log "we're not ready for this yet"
-        continue
-      else if model.pathType(key) == "real"
-        if(required.indexOf(key) == -1)
-          topass[key] = value
-        else if(value != "")
-          required.splice(required.indexOf(key), 1)
-    if(required.length > 0)
-      if(!err)
-        err = []
-      for key, value of required
-        err.push {name:value, message:"Missing a required value:"+value}
+      if(typeof params[key] != undefined && params[key] != "" && params[key] != null)
+        topass[key] = params[key]
+      else if(schema.paths[key].isRequired)
+        err.push {name:key, message:"Missing a required value:"+key}
+    if(err.length == 0)
+      err = undefined
     process.nextTick ()->
       next(err, topass)
   req_parse_params: (model, params, next)->
@@ -88,7 +81,6 @@ module.exports =
         to_return._page = "0"
     else 
       to_return._page = "0"
-    console.log(params);
     if(params["ipp"])
       if(params["ipp"].match(/[0-9]/))
         to_return._ipp = params["ipp"]
@@ -124,7 +116,6 @@ module.exports =
           message: "Improperly formatted Regex"
   #  if(si.length == 0)
   #    err.push {name:value, message:"You should search by an index:"+value}
-    console.log to_return
     if err.length == 0
       err = (undefined)
     process.nextTick ()->

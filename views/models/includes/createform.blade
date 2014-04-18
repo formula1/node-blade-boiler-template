@@ -9,14 +9,17 @@ function getCreateForm(form_version, model)
     div.createform
         h2= "Create "+pmn
         form(id="create_"+mname, method='GET', action="/model/"+mname+'/create?_csrf='+csrf, role='form')
-        -if(form_version == "table")
-            -for(var i in model.schema.paths)
-                -if(!i.match("^_"))
-                    div.input-group
-                        -var temptitle = model._getPrettyKey(i)
-                        label.input-group-addon= temptitle
-                        call path2Input(model, model.schema.paths[i], "")
-        -else if(form_version == "inline")
-            p Inline
-        -else if(form_version == "horizontal")
-            p Horizontal
+            -if(form_version == "table")
+                -for(var i in model.schema.paths)
+                    -if(!i.match("^_"))
+                        div.input-group
+                            -var temptitle = model._getPrettyKey(i)
+                            label.input-group-addon= temptitle
+                            call path2Input(model, model.schema.paths[i], "")
+                            -if(model.schema.paths[i].isRequired)
+                                span(style="color:#F00") Required
+                input(type="submit")
+            -else if(form_version == "inline")
+                p Inline
+            -else if(form_version == "horizontal")
+                p Horizontal

@@ -16,7 +16,7 @@ gettextSync = require "i18next.gettext"
 isDevelopment = process.env.NODE_ENV == "development"
 
 ########### initialize passport strategies ######################################
-require "./passport.coffee"
+require("../authentication").passport()
 
 ########### find out supported social websites ##################################
 socials = ["google","yahoo","persona"]

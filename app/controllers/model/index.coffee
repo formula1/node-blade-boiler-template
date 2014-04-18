@@ -69,23 +69,27 @@ user_validation = (model, req, next)->
 
 
 CRUD = {}
-CRUD.create=(model, params, next)->
+CRUD.create=(req,res,model, params, next)->
   utils.parse_params model, params, (err, topass)->
     ret_err = []
     if(err)
-      ret_err.push err
+      ret_err.concat err
       next(ret_err, topass)
       return
-    instance = new model(topass)
-    save_cb = (err, instance)->
+    model.create topass, (err, instance)->
       if err
+        throw new Error(err)
         ret_err.push err
         next ret_err, topass
         return
-      else
-        ret_err = (undefined)
-        next ret_err, instance
-    instance.save(save_cb)
+      instance._createHook req,res, (err)->
+        if err
+          ret_err.push err
+          next ret_err, topass
+          return
+        else
+          ret_err = (undefined)
+          next ret_err, instance
     return
   return
 CRUD.search=(model, params, another, next)->
@@ -327,13 +331,13 @@ Route =
             res.locals.model.instances = ret.docs
             Render("models/model",req,res)
         else if(patharray[2] == "create")
-          CRUD.create model, params, (err, ret)->
+          CRUD.create req,res, model, params, (err, ret)->
             if(err)
+            
               for key, value of err
                 req.flash 'info'
-                , req.i18n.t('ns.msg:flash.dberr') + err.message
-              res.locals.model.form.tocreate = ret
-              Render("models/model",req,res)
+                , JSON.stringify(err)
+              res.redirect(utils.object2URL(model))
               return
             res.locals.model.instance = ret
             res.locals.model.schema = model.schema

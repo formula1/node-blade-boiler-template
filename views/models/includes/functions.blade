@@ -20,18 +20,18 @@ function addRegExVal(formname, regex)
             
 function addAutoCompleteId(model,unique,path,valued)
     -var pathname = path.path
-    -console.log(model.modelName)
-    -console.log(path.path)
-    -console.log(path)
     -if(pathname == model._getDocSlug())
         -childmodel = model
     -else
         -childmodel = locals.model.utils.string2Model(path.options.ref)
-    
-    -if(valued == "")
+    -if(model._userAssociated() && path.path == "user")
+        -var docslug = "name"
+    -else
+        -var docslug = childmodel._getDocSlug()
+    -if(valued == "" || typeof valued == "undefined" || valued == null)
         -valued = ""
     -else
-        -valued = valued[childmodel._getDocSlug()]
+        -valued = valued[docslug]
     input.form-control(type="text", name=unique+pathname, data-provide="typeahead", autocomplete="off", value=valued)
     script(type="text/javascript")
         |!
@@ -41,13 +41,11 @@ function addAutoCompleteId(model,unique,path,valued)
             $("[name=#{unique+pathname}]").typeahead({source:
             function(query, process){
             query = encodeURIComponent(query);
-            $.ajax("/model/#{childmodel.modelName}/autocomplete?path=#{childmodel._getDocSlug()}&value="+query)
+            $.ajax("/model/#{childmodel.modelName}/autocomplete?path=#{docslug}&value="+query)
             .done(function(data){
-            console.log(data);
             data_array = []
             for(var i in data)
-            data_array[data_array.length] = data[i].#{childmodel._getDocSlug()};
-            console.log(data_array);
+            data_array[data_array.length] = data[i].#{docslug};
             window.autocomplete_results.item_#{unique+pathname} = data_array;
             process(window.autocomplete_results.item_#{unique+pathname});
             });
@@ -77,13 +75,10 @@ function addAutoCompleteTag(model,unique,path,valued)
             query = encodeURIComponent(query);
             var array_def = $.Deferred();
             $.ajax("/model/#{childmodel.modelName}/autocomplete?path=#{childmodel._getDocSlug()}&value="+query).done(function(data){
-            console.log(data);
             data_array = []
             for(var i in data){
-            console.log(typeof data[i].#{childmodel._getDocSlug()});
             data_array.push( data[i].#{childmodel._getDocSlug()});
             }
-            console.log(data_array);
             array_def.resolve(data_array);
             });
             return array_def.promise()
@@ -191,8 +186,11 @@ function path2Text(instance, path)
                                 -var set_text = valued[i]
                             -else if(pathval.caster.instance == "ObjectID")
                                 -var childmodel = valued[i].model(valued[i].constructor.modelName);
-                                -var set_href=locals.model.utils.object2URL(valued[i])
-                                -var set_text = valued[i][childmodel._getDocSlug()]
+                                -if(instance.constructor._userAssociated() && i == "user")
+                                    -var set_text = valued[i].name
+                                -else
+                                    -var set_href=locals.model.utils.object2URL(valued[i])
+                                    -var set_text = valued[i][childmodel._getDocSlug()]
                             -else if(pathval.instance == "Number")
                                 -var set_href = ""
                                 -var set_text = valued[i]
@@ -212,8 +210,13 @@ function path2Text(instance, path)
             = "none"
         -else
             -var childmodel = instance[pathname].model(instance[pathname].constructor.modelName)
-            -var set_href = locals.model.utils.object2URL(instance[pathname])
-            -var set_text = instance[pathname][childmodel._getDocSlug()]
+            -if(instance.constructor._userAssociated() && pathname == "user")
+                -console.log("userassoc")
+                -var set_href = ""
+                -var set_text = instance[pathname].name
+            -else
+                -var set_href=locals.model.utils.object2URL(instance[pathname])
+                -var set_text = instance[pathname][childmodel._getDocSlug()]
             a(href=set_href)= set_text
     -else if(pathval.instance == "Number")
         = valued
@@ -229,7 +232,7 @@ function path2Input(model, path, valued, unique)
     -if(pathval.caster)
         //-we have an array
         call handleArrayForm(model,unique, path,valued)
-    -else if(pathval.instance == "ObjectID" || model._getDocSlug() == pathname)
+    -else if(pathval.instance == "ObjectID" || (model._getDocSlug() == pathname && typeof valued == null))
         call addAutoCompleteId(model,unique,path,valued)
     -else if(pathval.instance == "String")
         -if(pathval.enumValues.length > 0)
