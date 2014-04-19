@@ -24,10 +24,7 @@ function addAutoCompleteId(model,unique,path,valued)
         -childmodel = model
     -else
         -childmodel = locals.model.utils.string2Model(path.options.ref)
-    -if(model._userAssociated() && path.path == "user")
-        -var docslug = "name"
-    -else
-        -var docslug = childmodel._getDocSlug()
+    -var docslug = childmodel._getDocSlug()
     -if(valued == "" || typeof valued == "undefined" || valued == null)
         -valued = ""
     -else
@@ -90,6 +87,7 @@ function addAutoCompleteTag(model,unique,path,valued)
 
 
 function handleArrayForm(model,unique,pathval,valued)
+    -var pathname = pathval.path
     -if(pathval.caster.instance == "ObjectID" || model._getDocSlug() == pathname)
         call addAutoCompleteTag(model,unique,pathval,valued)
     -else if(pathval.instance == "String")
@@ -186,11 +184,8 @@ function path2Text(instance, path)
                                 -var set_text = valued[i]
                             -else if(pathval.caster.instance == "ObjectID")
                                 -var childmodel = valued[i].model(valued[i].constructor.modelName);
-                                -if(instance.constructor._userAssociated() && i == "user")
-                                    -var set_text = valued[i].name
-                                -else
-                                    -var set_href=locals.model.utils.object2URL(valued[i])
-                                    -var set_text = valued[i][childmodel._getDocSlug()]
+                                -var set_href=locals.model.utils.object2URL(valued[i])
+                                -var set_text = valued[i][childmodel._getDocSlug()]
                             -else if(pathval.instance == "Number")
                                 -var set_href = ""
                                 -var set_text = valued[i]
@@ -210,13 +205,8 @@ function path2Text(instance, path)
             = "none"
         -else
             -var childmodel = instance[pathname].model(instance[pathname].constructor.modelName)
-            -if(instance.constructor._userAssociated() && pathname == "user")
-                -console.log("userassoc")
-                -var set_href = ""
-                -var set_text = instance[pathname].name
-            -else
-                -var set_href=locals.model.utils.object2URL(instance[pathname])
-                -var set_text = instance[pathname][childmodel._getDocSlug()]
+            -var set_href=locals.model.utils.object2URL(instance[pathname])
+            -var set_text = instance[pathname][childmodel._getDocSlug()]
             a(href=set_href)= set_text
     -else if(pathval.instance == "Number")
         = valued
@@ -241,20 +231,14 @@ function path2Input(model, path, valued, unique)
                     option= pathval.enumValues[j]
         -else if(pathval.regExp != null)
             div.form-group
-                input.form-control(type="text" name=unique+pathname, value=valued)
-                span.glyphicon.glyphicon-ok.form-control-feedback
-                call addRegExVal(unique+pathname, pathval.regExp)
+                input.form-control(type="text" name=unique+pathname, value=valued pattern=pathval.regExp)
         -else
             input.form-control(type="text" name=unique+pathname value=valued)
     -else if(pathval.instance == "Number")
-        div.form-group
-            input.form-control(type="text" name=unique+pathname, value=valued)
-            span.glyphicon.glyphicon-ok.form-control-feedback
-            call addRegExVal(unique+pathname, "[0-9]+")
+        input.form-control(type="text" name=unique+pathname, value=valued, pattern="[0-9]+")
     -else if(pathval.instance == "Date")
         input(type="datetime-local" name=unique+pathname value=valued)
     -else if(pathval.instance == "Boolean")
-        label.checkbox-inline
-            input(type="checkbox" name=unique+pathname value=valued)
+        input(type="checkbox" name=unique+pathname value=valued)
     -else
         p= pathval.instance

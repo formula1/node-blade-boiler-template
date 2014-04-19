@@ -3,7 +3,6 @@ utils = require ("./utils.coffee")
 module.exports =
   create: (req, res, model, params, next) ->
     utils.parse_params model, params, (err, topass) ->
-      ret_err = undefined
       ret_err = []
       if err
         ret_err.concat err
@@ -11,7 +10,8 @@ module.exports =
         return
       model.create topass, (err, instance) ->
         if err
-          throw new Error(err)ret_err.push err
+          throw new Error(err)
+          ret_err.push err
           next ret_err, topass
           return
         instance._createHook req, res, (err) ->

@@ -76,6 +76,18 @@ module.exports =
             next(err)
             return
           providers[req.params.method].loginCallback(req,res, user, info)
+    app.all "/authenticate/:method/setup", (req, res, next)->
+      if(typeof providers[req.params.method] == "undefined")
+        req.flash('info', req.i18n.t('this method of authorization isn\'t Accepted'))
+        res.statuscode = 404
+        res.redirect "index"
+        return
+      if(typeof providers[req.params.method].setup == "undefined")
+        req.flash('info', req.i18n.t('this method of authorization isn\'t Accepted'))
+        res.statuscode = 404
+        res.redirect "index"
+        return
+      providers[req.params.method].setup req, res, next
     app.all "/authenticate/:method/callback", (req,res,next)->
       if(req.isAuthenticated())
         req.flash('info', req.i18n.t('ns.msg:flash.alreadyauthorized'))

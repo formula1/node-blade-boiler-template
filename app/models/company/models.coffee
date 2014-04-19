@@ -300,7 +300,7 @@ sUser = fOCSchema(
     required: false
   user:
     type: Schema.Types.ObjectId
-    ref: "User"
+    ref: "user"
     required: true
     unique: true
   name:
@@ -308,7 +308,8 @@ sUser = fOCSchema(
   activated:
     type:Boolean
     default:(false)
-  userAssociated: (true)
+,
+  associatedTo: "user"
 )
 
 sUser.static "activate", (req,res,next)->

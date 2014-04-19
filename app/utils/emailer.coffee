@@ -38,8 +38,9 @@ class Emailer
 
     attachments = @getAttachments(html)
     messageData =
-      to: "'#{@options.to.name} #{@options.to.surname}' <#{@options.to.email}>"
-      from: "'continentalclothing.com'"
+      #to: "'#{@options.to.name} #{@options.to.surname}' <#{@options.to.email}>"
+      to: "<#{@options.to.email}>"
+      from: "noreply@localhost"
       subject: @options.subject
       html: html
       generateTextFromHTML: true
@@ -48,11 +49,15 @@ class Emailer
     transport.sendMail messageData, callback
 
   getTransport: ()->
-    emailer.createTransport "SMTP",
-      service: "Gmail"
-      auth:
-        user: config.SMTP.user,
-        pass: config.SMTP.pass
+    if(process.env.SMTP_SERVICE)
+      return emailer.createTransport "SMTP",
+        service: process.env.SMTP_SERVICE
+        auth:
+          user: config.SMTP.user,
+          pass: config.SMTP.pass
+    else
+      console.log("defaulting")
+      return emailer.createTransport("direct", {debug:true})
 
   getHtml: (templateName, data)->
     templatePath = "./views/emails/#{templateName}.html"

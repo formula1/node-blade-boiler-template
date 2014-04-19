@@ -10,7 +10,7 @@ jQuery(function($) {
           if (user) return;
           $.ajax({ /* <-- This example uses jQuery, but you can use whatever you'd like */
             type: 'POST',
-            url: '/social/persona', // This is a URL on your website.
+            url: '/authenticate/persona', // This is a URL on your website.
             data: {assertion: assertion, _csrf: csrf},
             success: function(res, status, xhr) { 
               

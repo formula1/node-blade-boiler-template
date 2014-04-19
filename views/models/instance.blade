@@ -6,30 +6,42 @@ replace block page
     -var doc = locals.model.instance
     -var title = doc[dslug]
     -var url = locals.model.utils.object2URL(doc)
-    h1=title
-    div
-        form(action=url+"/update")
-            ul
+    div.main_instance
+        h1=title
+        div
+            form(action=url+"/update")
                 -for(var i in model.schema.paths)
                     -if(!i.match("^_"))
-                        div.input-group
+                        div.input-prepend
                             -var temptitle = model._getPrettyKey(i)
-                            label.input-group-addon= temptitle
+                            span.add-on= temptitle
                             call path2Input(model, model.schema.paths[i], doc[i])
-    -if(locals.model.model.schema.methods.length > 0)
-        div
-            h3 Instance Methods
-            div.flight_sidebar.span4.accordian#flight_sidebar
-            -for(var i in locals.model.model.schema.methods)
-                div.accordian-group.sidebar_item
-                    div.accordian-heading
-                        a.accordian-toggle(data-toggle="collapse", data-parent="flight_sidebar", href="#collapse_"+i)= i
-                    div.accordian-body.collapse.in(id="collapse_"+i)
-                        div.accordian-inner
-                            form(action=url+"/"+i)
-                                -var args = locals.model.utils.getArgs(locals.model.model.schema.statics[i])
-                                foreach args as arg
-                                    label=arg
-                                    input(type="text", name=arg)
-                                    br
-                                input(type="submit")
+                input(type="submit")
+        -if(locals.model.model.schema.methods.length > 0)
+            div
+                h3 Instance Methods
+                include "includes/sidebar.blade"
+                call sidebar(doc, locals.model.model.schema.methods)
+    div.assoc_docs
+        -console.log(locals.model.instance)
+        -for(var i=0;i<locals.model.instance.associated.length;i++)
+            -var doc = locals.model.instance.associated[i]
+            -var model = doc._getModel()
+            -var dslug = model._getDocSlug()
+            -var title = doc[dslug]
+            -var url = locals.model.utils.object2URL(doc)
+            h1(id=model.modelName)=model.modelName
+            div
+                form(action=url+"/update")
+                    -for(var i in model.schema.paths)
+                        -if(!i.match("^_"))
+                            div.input-prepend
+                                -var temptitle = model._getPrettyKey(i)
+                                span.add-on= temptitle
+                                call path2Input(model, model.schema.paths[i], doc[i])
+                    input(type="submit")
+            -if(model.schema.methods.length > 0)
+                div
+                    h3 Instance Methods
+                    include "includes/sidebar.blade"
+                    call sidebar(doc, model.schema.methods)

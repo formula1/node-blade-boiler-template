@@ -1,6 +1,6 @@
 .row
 	.span3
-		form#form_login_user.auth-at-dropdown(method="post" action="/user/create")
+		form#form_login_user.auth-at-dropdown(method="post" action="/authenticate/local")
 			fieldset
 				input(type='hidden', name='_csrf', value=csrf_token)
 				.control-group

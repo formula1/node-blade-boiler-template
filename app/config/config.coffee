@@ -3,10 +3,11 @@
 db = require "./db"
 exports.setEnvironment = (env) ->
   # General settings
-  exports.SMTP =
-    service: "Gmail"
-    user: process.env.SMTP_USER
-    pass: process.env.SMTP_PASSWD
+  if(process.env.SMTP_SERVICE)
+    exports.SMTP =
+      service: process.env.SMTP_SERVICE
+      user: process.env.SMTP_USER
+      pass: process.env.SMTP_PASSWD
 
   exports.EMAIL =
     registration: "dev@continentalclothing.com"

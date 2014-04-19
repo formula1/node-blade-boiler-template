@@ -38,9 +38,7 @@ if(boo)
     fs.readdirSync(path).forEach (file) ->
       console.log("ok")
       stats = fs.statSync(path+"/"+file)
-      if(file == "user")
-        return
-      else if(stats.isDirectory())
+      if(stats.isDirectory())
         checker(path+"/"+file)
       else
         require path+"/"+file
@@ -98,34 +96,33 @@ CRUD.method = (req,res,doc, method,query, next)->
         return
       next(null,data, render)
   doc[method].apply(doc, argvalues)
-  
-Render = (path, req, res)->
-  for key, value of res.locals.model.models
-    console.log(key)
 
-  modelcounter = 0;
-  assoc_model = ()->
-    if(modelcounter == models_array.length)
+handleInstance = (path, req, res, callback)->
+  if(path == "models/instance")
+    res.locals.model.instance._getAssociated req, (instance)->
+      res.locals.model.instance = instance
+      callback path, req, res
+  else
+    callback path, req, res
+
+handleUser = (path, req, res, callback)->
+  if(req.user)
+    req.user.__getAssociated req,(user)->
+      req.user = user
+      res.locals.user = user
+      callback path, req, res, callback
+  else
+    callback path, req, res, callback
+
+Render = (path, req, res)->
+  handleInstance path, req, res, (path, req, res)->
+    handleUser path, req, res, (path, req, res)->
       plugins.emit "preRender", req, res, (err_arr,req, res)->
         for errored in err_arr
           req.flash 'info'
           , req.i18n.t('ns.msg:flash.dberr') + errored.message
-        res.locals.user = req.user
         res.render(path)
-    else if(models_array[modelcounter]._userAssociated && models_array[modelcounter]._userAssociated())
-      models_array[modelcounter].findOne({user:req.user._id})\
-      .populate("*").exec (err,doc)->
-        if(err)
-          console.log(err)
-        if(doc)
-          req.user[models_array[modelcounter].modelName] = doc
-        modelcounter++
-        assoc_model()
-    else
-      modelcounter++
-      assoc_model()
-  assoc_model()
-  
+
 
 # User model's CRUD controller.
 Route =
@@ -140,10 +137,11 @@ Route =
     db_funk = ()->
       if names.length > 0
         name = names.pop()
-        if(name.toLowerCase() == "user")
+        model = mongoose.model(name)
+        if(model._associatedTo != "")
           db_funk()
           return
-        model = mongoose.model(name)
+        console.log(name)
         mi = model
         model._validateRequest req, null, null, (valboo)->
           if valboo
@@ -171,12 +169,6 @@ Route =
     res.locals.model.utils = utils
     patharray = urlparse.parse(req.originalUrl).pathname.split "/"
     patharray.splice 0,1
-    if(patharray[1].match("User"))
-      req.flash 'info'
-      , "Non Exsistant Model"
-      res.statusCode = 404
-      res.redirect("/model")
-      return
     names = mongoose.modelNames()
     if(names.indexOf(patharray[1]) == -1)
       req.flash 'info'
@@ -215,6 +207,7 @@ Route =
           res.locals.model.request = params
           res.locals.model.instances = ret.docs
           console.log("DOCS"+ret.docs.length)
+          console.log(ret.docs)
           Render("models/model",req,res)
       else if(patharray.length < 4)
         if(patharray[2].indexOf("search") == 0)
@@ -238,14 +231,11 @@ Route =
         else if(patharray[2] == "create")
           CRUD.create req,res, model, params, (err, ret)->
             if(err)
-            
               for key, value of err
                 req.flash 'info'
                 , JSON.stringify(err)
               res.redirect(utils.object2URL(model))
               return
-            res.locals.model.instance = ret
-            res.locals.model.schema = model.schema
             res.statusCode = 200
             res.redirect(utils.object2URL(instance))
         else
@@ -293,18 +283,17 @@ Route =
       else
         find = {}
         find[model._getDocSlug()] = decodeURIComponent(patharray[2])
-        model.find find, (err,docs)->
+        model.findOne find, (err,doc)->
           if(err)
             req.flash('info', req.i18n.t('ns.msg:flash.dberr') + err)
             res.model = model
             res.redirect(utils.object2URL(model))
-          if(docs.length == 0)
+          if(!doc)
             req.flash 'info'
             , req.i18n.t('ns.msg:flash.dberr')\
             + "this "+model.modelName+" does not exist"
             res.statusCode = 404
             res.redirect(utils.object2URL(model))
-          doc = docs[0]
           res.locals.model.instance = doc
           if(!patharray[3] || patharray[3] = "")
             Render("models/instance",req,res)

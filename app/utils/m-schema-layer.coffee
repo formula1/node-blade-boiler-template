@@ -1,19 +1,23 @@
 mongoose = require "mongoose"
 Schema = mongoose.Schema
+utils = require "../controllers/model/utils.coffee"
 
-module.exports = (settings) ->
+module.exports = (settings, overloads) ->
   tgetPretty = (path) ->
     path
 
-  tvalidateUser = (req, instance, method, next) ->
+  tvalidateUser = (req, model_or_instance, method, next) ->
     next(true)
 
-  if(settings.userAssociated)
-    uA = settings.userAssociated
-    delete settings.userAssociated
-  else
-    uA = false
-    
+  if(overloads)
+    assocTo = ""
+    if(overloads.associatedTo)
+      if(typeof overloads.associatedTo == "string")
+        assocTo = overloads.associatedTo
+        if(assocTo == "user")
+          if(overloads.terms_and_conditions)
+            terms_and_conditions = overloads.terms_and_conditions
+  
   if settings.alterPathValue
     tgetalter = setting.alterPathValue
     delete setting.alterPathValue
@@ -49,18 +53,26 @@ module.exports = (settings) ->
   ret = new Schema(settings)
   ret.static "_getDocSlug", ->
     tdocSlug
+  if(terms_and_conditions)
+    ret.static "TandC", ()->
+      return terms_and_conditions
 
   ret.method "_createHook", (req,res,next)->
     next()
   ret.static("_alterPathValue", tgetalter)
   ret.static("_pathDescriptions", tgetdes)
-  ret.static("_alterPathValue", tgetalter)
   ret.static("_getPrettyKey", tgetPretty)
   ret.static("_validateRequest", tvalidateUser)
   ret.method "_getModel", ()->
-    this.model(this.constructor.modelName)
-  ret.static "_userAssociated", ()->
-    return uA
+    mongoose.model(this.constructor.modelName)
+  ret.method "_getAssociated", (req, callback)->
+    instance = this
+    utils.getAssociatedInstances req, this, (found, unfound)->
+      instance.associated = found
+      callback(instance)
+
+  ret.static "_associatedTo", ()->
+    return assocTo
   ret.static "autocomplete", (path,value,next)->
     search = {}
     ret_err = []

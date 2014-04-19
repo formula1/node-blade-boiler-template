@@ -1,6 +1,39 @@
 mongoose = require "mongoose"
 
 module.exports = 
+  getAssociatedInstances: (req,instance, callback)->
+    model_list = mongoose.modelNames()
+    modelname = instance.constructor.modelName
+    associated_instances = []
+    unfound_models = []
+    assoc_model = ()->
+      if(model_list.length == 0)
+        callback(associated_instances, unfound_models)
+        return
+      else 
+        cur_model = mongoose.model(model_list.pop())
+        if(cur_model._associatedTo() == modelname)
+          tofind = {}
+          tofind[modelname] = instance._id
+          cur_model.findOne(tofind)\
+          .populate("*").exec (err,doc)->
+            if(err)
+              console.log(err)
+              assoc_model()
+            if(doc)
+              cur_model._validateRequest req, doc, undefined, (boo)->
+                if(boo)
+                  associated_instances.push doc
+                assoc_model()
+            else
+              cur_model._validateRequest req, cur_model, undefined, (boo)->
+                if(boo)
+                  unfound_models.push cur_model
+                assoc_model()
+        else
+          assoc_model()
+    assoc_model()
+
   object2URL: (object)->
     if(object instanceof mongoose.Document)
       model = mongoose.model(object.constructor.modelName)
@@ -15,6 +48,8 @@ module.exports =
     if(result == null)
       result = []
     return result
+  instance2Model: (instance)->
+    mongoose.model(instance.constructor.modelName)
   string2Model: (name)->
     mongoose.model(name)
   parse_params: ( model, params, next)->
