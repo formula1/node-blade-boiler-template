@@ -2,7 +2,7 @@ header
     .navbar.navbar-fixed-top
         .navbar-inner
             -var warning = ""
-            -if(locals.user.tandc)
+            -if(locals.user && locals.user.tandc)
                 -warning = "btn-warning"
             button.btn.btn-navbar.collapsed(type="button" data-toggle="collapse" data-target="#navbar-nav-collapse" class=warning)
                 span.icon-bar
