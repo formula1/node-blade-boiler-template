@@ -122,6 +122,7 @@ UserSchema.statics.register = (user, cb) ->
 
 # Activate new user
 UserSchema.statics._activate = (token, cb) ->
+  console.log(token)
   @findOne
     tokenString: token
   , (err, existingUser) ->
@@ -137,18 +138,22 @@ UserSchema.statics._activate = (token, cb) ->
       else
         cb "token-expired"
     else
+      console.log("no user")
       cb "token-expired-or-user-active"
 
 UserSchema.method "__getAssociated", (req, callback)->
+  user = this;
   utils.getAssociatedInstances req,this, (found, unfound)->
-    this.associated = found
-    this.tandc = []
-    for model of unfound
-      if(model.TermsAndConditions)
-        this.tandc.push model.TermsAndConditions()
-    if(this.tandc.length == 0)
-      delete this.tandc
-    user = this
+    user.associated = found
+    user.tandc = []
+    user.tandc_model = []
+    for model in unfound
+      if(model.hasOwnProperty("_TandC"))
+        user.tandc.push model._TandC()
+        user.tandc_model.push model
+    if(user.tandc.length == 0)
+      delete user.tandc
+      delete user.tandc_model
     process.nextTick ()->
       callback(user)
       

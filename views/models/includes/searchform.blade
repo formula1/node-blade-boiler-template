@@ -7,9 +7,10 @@ function getSearchForm(model)
         -var mname = model.modelName
         -var pmn = model._getPrettyKey(model.modelName)
         -var dslug = model._getDocSlug()
+        -var url = locals.model.utils.object2URL(model)
         h2= "Search "+pmn
         div.row
-            form#search(method='GET', action="/model/"+mname+'/search?_csrf='+csrf, role='form')
+            form#search(method='GET', action=url+'search?_csrf='+csrf, role='form')
                 div.input-group
                     call path2Input(model, model.schema.paths[dslug], "")
                     span.input-group-btn

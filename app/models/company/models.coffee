@@ -2,9 +2,10 @@ mongoose = require('mongoose')
 Schema = mongoose.Schema
 rmv = require "../../utils/m-schema-layer.coffee"
 
-fOCSchema = (settings)->
-  ret = rmv(settings)
-  console.log("TYPING"+typeof ret)
+console.log("models.coffee")
+
+fOCSchema = (settings, overloads)->
+  ret = rmv(settings, overloads)
   ret.statics._findOrCreate = (query,to_save, next)->
     model = this
     this.findOne query, (err, doc) ->
@@ -303,13 +304,12 @@ sUser = fOCSchema(
     ref: "user"
     required: true
     unique: true
-  name:
-    type: String
   activated:
     type:Boolean
     default:(false)
 ,
   associatedTo: "user"
+  tandc: "tandc/lorem.txt"
 )
 
 sUser.static "activate", (req,res,next)->
@@ -335,22 +335,6 @@ sUser.static "activate", (req,res,next)->
           next(err)
         else
           next()
-        
-      
-
-sUser.pre "save", (next)->
-  if(!this.user)
-    next("Need a User")
-  SiteUser = mongoose.model("User")
-  SiteUser.findOne {_id:this.user}, (err,user)->
-    if(err)
-      next(err)
-    if(!user)
-      next("This user does not Exist")
-    else
-      this.name = user.name+" "+user.surname
-      next()
-
 
 
 sUser.post 'save', (doc)->

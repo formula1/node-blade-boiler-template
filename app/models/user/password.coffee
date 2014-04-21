@@ -34,11 +34,11 @@ password = rmv(
     type:Boolean
     default:false
   validateRequest: (req, mi, method, next) ->
-    if(mi instanceof mongoose.Document)
+    if(mi instanceof mongoose.Document && req.user)
+      console.log("valid?"+(mi.user.toString() == req.user._id.toString()))
       next(mi.user.toString() == req.user._id.toString())
     else
       next(false)
-  docSlug: "user._id"
 ,
   associatedTo: "user"
 )
@@ -59,30 +59,23 @@ password.virtual("isLocked").get ->
 password.pre "save", (next)->
   return next() unless this.isModified("password")
   # generate a salt
+  password = this
   bcrypt.genSalt SALT_WORK_FACTOR, (err, salt) ->
     return next(err)  if err
 
     # hash the password along with our new salt
-    bcrypt.hash this.password, salt, (err, hash) ->
+    bcrypt.hash password.password, salt, (err, hash) ->
       return next(err)  if err
 
       # override the cleartext password with the hashed one
-      this.password = hash
+      password.password = hash
+      next()
 
 
 password.post "save", (doc)->
-  User.findOne {_id:doc.user}, (err,user)->
+  User.update {_id:doc.user}, {$addToSet: {provider:"local"}}, (err)->
     if(err)
-      console.log("password svae error")
-      return
-    if(!user)
-      console.log("This user Does not Exist")
-      doc.remove()
-      return
-    user.providers.addToSet("local")
-    user.save (err)->
-      if(err)
-        console.log("user save error in password")
+      console.log("user save error in password")
 
 password.method "_incLoginAttempts", (next)->
   #if we have a previous lock that has expired, restart at 1

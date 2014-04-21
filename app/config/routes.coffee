@@ -11,6 +11,10 @@ module.exports = (app) ->
   app.all "/", (req, res, next) ->
     routeMvc("index", "index", req, res, next)
   authentication.routes(app)
+  mr = require(process.cwd() + "/app/controllers/model/router.coffee")
+  for key, value of mr
+    app.all key, value
+
   fs.readdirSync(process.cwd() + "/app/controllers").forEach (file) ->
     controller = file.split(".")[0]
     app.all "/#{controller}", (req, res, next) ->

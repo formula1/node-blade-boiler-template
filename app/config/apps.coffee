@@ -16,7 +16,8 @@ gettextSync = require "i18next.gettext"
 isDevelopment = process.env.NODE_ENV == "development"
 
 ########### initialize passport strategies ######################################
-require("../authentication").passport()
+auth = require("../authentication")
+auth.passport()
 
 ########### find out supported social websites ##################################
 socials = ["google","yahoo","persona"]
@@ -103,5 +104,6 @@ module.exports = (app) ->
   .set( "languages", getAvailableLanguages() )
   .use( passport.initialize() )
   .use( passport.session() )
+  .use(auth.middleware)
   .use( express.errorHandler( { dumpException: true,  showStack: true } ) )
   app

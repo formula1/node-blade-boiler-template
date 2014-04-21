@@ -164,6 +164,7 @@ Route =
     db_funk()
 
   all:  (req, res) ->
+    console.log("to start")
     res.locals.model = {}
     res.locals.model.models = models
     res.locals.model.utils = utils
@@ -178,20 +179,20 @@ Route =
       return
     model = mongoose.model(patharray[1])
     res.locals.model.model = model
-    model._validateRequest req, null, null, (validboo)->
-      if(!validboo)
-        req.flash 'info'
-        , "You don't have access"
-        res.statusCode = 403
-        res.redirect("/model")
-        return
-      params
-      if(req.method.toUpperCase() == "GET")
-        params = req.query
-        console.log(params)
-      else if(req.method.toUpperCase() == "POST")
-        params = req.body
-      if(patharray.length < 3 || patharray[2] == "")
+    params
+    if(req.method.toUpperCase() == "GET")
+      params = req.query
+      console.log(params)
+    else if(req.method.toUpperCase() == "POST")
+      params = req.body
+    if(patharray.length < 3 || patharray[2] == "")
+      model._validateRequest req, null, null, (validboo)->
+        if(!validboo)
+          req.flash 'info'
+          , "You don't have access"
+          res.statusCode = 403
+          res.redirect("/model")
+          return
         CRUD.search model, params, null, (err, ret)->
           if(err)
             for errored in err
@@ -209,121 +210,134 @@ Route =
           console.log("DOCS"+ret.docs.length)
           console.log(ret.docs)
           Render("models/model",req,res)
-      else if(patharray.length < 4)
-        if(patharray[2].indexOf("search") == 0)
-          another = patharray[2].split "-"
-          if(another.length > 1)
-            another = another[1]
-          else
-            another = (null)
-          CRUD.search model, params, another, (err, ret)->
-            if(err)
-              for key, value of err
-                req.flash 'info'
-                , req.i18n.t('ns.msg:flash.dberr') + err.message
-              res.locals.model.request = ret
-              res.locals.model.instances = []
-              Render("models/model",req,res)
-              return
-            res.locals.model.request = ret.params
-            res.locals.model.instances = ret.docs
-            Render("models/model",req,res)
-        else if(patharray[2] == "create")
-          CRUD.create req,res, model, params, (err, ret)->
-            if(err)
-              for key, value of err
-                req.flash 'info'
-                , JSON.stringify(err)
-              res.redirect(utils.object2URL(model))
-              return
-            res.statusCode = 200
-            res.redirect(utils.object2URL(instance))
+    else if(patharray.length < 4)
+      if(patharray[2].indexOf("search") == 0)
+        another = patharray[2].split "-"
+        if(another.length > 1)
+          another = another[1]
         else
-          schema = model.schema
-          if(patharray[2].match("^_"))
-            req.flash 'info'
-            , "Non Exsistant Method in Model "+model.modelName
-            res.statusCode = 404
-            res.locals.model.params = params
+          another = (null)
+        CRUD.search model, params, another, (err, ret)->
+          if(err)
+            for key, value of err
+              req.flash 'info'
+              , req.i18n.t('ns.msg:flash.dberr') + err.message
+            res.locals.model.request = ret
+            res.locals.model.instances = []
+            Render("models/model",req,res)
+            return
+          res.locals.model.request = ret.params
+          res.locals.model.instances = ret.docs
+          Render("models/model",req,res)
+      else if(patharray[2] == "create")
+        CRUD.create req,res, model, params, (err, ret)->
+          if(err)
+            for key, value of err
+              req.flash 'info'
+              , JSON.stringify(err)
             res.redirect(utils.object2URL(model))
-          for key, value of schema.statics
-            if(key.match("^_"))
-              continue
-            if(patharray[2] == key)
-              CRUD.method req,res,model,key,params, (err, data,renderType)->
-                console.log(err)
-                console.log(data)
-                console.log(renderType)
-                if(!renderType)
-                  if(err)
-                    for key, value of err
-                      req.flash 'info'
-                      , req.i18n.t('ns.msg:flash.dberr') + value
-                  res.locals.model[key] = data
-                  Render("models/model",req,res)
-                  return
-                else if(renderType.toUpperCase() == "JSON")
-                  if(err)
-                    res.json(500,err)
-                  else
-                    res.json(200,data)
-                  return
-                else if(renderType.toUpperCase() == "PATH")
-                    for key, value of err
-                      req.flash 'info'
-                      , req.i18n.t('ns.msg:flash.dberr') + err
-                  res.locals.model[key] = data
-                  Render(data.path,req,res)
-              return
+            return
+          res.statusCode = 200
+          res.redirect(utils.object2URL(instance))
+      else
+        schema = model.schema
+        if(patharray[2].match("^_"))
           req.flash 'info'
           , "Non Exsistant Method in Model "+model.modelName
           res.statusCode = 404
           res.locals.model.params = params
           res.redirect(utils.object2URL(model))
-      else
-        find = {}
-        find[model._getDocSlug()] = decodeURIComponent(patharray[2])
-        model.findOne find, (err,doc)->
-          if(err)
-            req.flash('info', req.i18n.t('ns.msg:flash.dberr') + err)
-            res.model = model
-            res.redirect(utils.object2URL(model))
-          if(!doc)
-            req.flash 'info'
-            , req.i18n.t('ns.msg:flash.dberr')\
-            + "this "+model.modelName+" does not exist"
-            res.statusCode = 404
-            res.redirect(utils.object2URL(model))
-          res.locals.model.instance = doc
-          if(!patharray[3] || patharray[3] = "")
-            Render("models/instance",req,res)
-          else if(patharray[3] == "update")
-          else if(patharray[3] == "delete")
-          else
-            schema = model.schema
-            for key, value of schema.methods
-              if(patharray[3] == key)
-                CRUD.method req,res,doc,key,params, (err, data)->
-                  if(err)
-                    for key, value of err
-                      req.flash 'info'
-                      , req.i18n.t('ns.msg:flash.dberr') + err
-                    res.locals.model.forms[key].args = ret
-                    Render("models/instance",req,res)
-                    return
-                  if(!renderType)
-                    res.locals.model[key] = data
-                    Render("models/instance",req,res)
-                  if(renderType.toUpperCase() == "JSON")
-                      res.json(data)
-                  if(renderType.toUpperCase() == "PATH")
-                    res.locals.model[key] = data
-                    Render(data.path,req,res)
+        for key, value of schema.statics
+          if(key.match("^_"))
+            continue
+          if(patharray[2] == key)
+            CRUD.method req,res,model,key,params, (err, data,renderType)->
+              console.log(err)
+              console.log(data)
+              console.log(renderType)
+              if(!renderType)
+                if(err)
+                  for key, value of err
+                    req.flash 'info'
+                    , req.i18n.t('ns.msg:flash.dberr') + value
+                res.locals.model[key] = data
+                Render("models/model",req,res)
                 return
-            req.flash 'info'
-            , req.i18n.t('ns.msg:flash.dberr')\
-            + "This method does not exist"
-            res.statusCode = 404
+              else if(renderType.toUpperCase() == "JSON")
+                if(err)
+                  res.json(500,err)
+                else
+                  res.json(200,data)
+                return
+              else if(renderType.toUpperCase() == "PATH")
+                  for key, value of err
+                    req.flash 'info'
+                    , req.i18n.t('ns.msg:flash.dberr') + err
+                res.locals.model[key] = data
+                Render(data.path,req,res)
+            return
+        req.flash 'info'
+        , "Non Exsistant Method in Model "+model.modelName
+        res.statusCode = 404
+        res.locals.model.params = params
+        res.redirect(utils.object2URL(model))
+    else
+      find = {}
+      find[model._getDocSlug()] = decodeURIComponent(patharray[2])
+      model.findOne find, (err,doc)->
+        if(err)
+          req.flash('info', req.i18n.t('ns.msg:flash.dberr') + err)
+          res.model = model
+          res.redirect(utils.object2URL(model))
+        if(!doc)
+          req.flash 'info'
+          , req.i18n.t('ns.msg:flash.dberr')\
+          + "this "+model.modelName+" does not exist"
+          res.statusCode = 404
+          return res.redirect(utils.object2URL(model))
+        res.locals.model.instance = doc
+        console.log("3rd: "+patharray[3])
+        if(patharray[3] = "")
+          return Render("models/instance",req,res)
+        else if(patharray[3].toLowerCase() == "update")
+          console.log("updating")
+          CRUD.update req,res,doc,params, (err, data)->
+            if(err)
+              for key, value of err
+                req.flash 'info'
+                , req.i18n.t('ns.msg:flash.dberr') + err
+              res.locals.model.forms[key].args = ret
+              Render("models/instance",req,res)
+              return
+            res.locals.model.instance = data
             Render("models/instance",req,res)
+          return
+        else if(patharray[3] == "delete")
+        else
+          schema = model.schema
+          for key, value of schema.methods
+            if(patharray[3] == key)
+              CRUD.method req,res,doc,key,params, (err, data)->
+                if(err)
+                  for key, value of err
+                    req.flash 'info'
+                    , req.i18n.t('ns.msg:flash.dberr') + err
+                  res.locals.model.forms[key].args = ret
+                  Render("models/instance",req,res)
+                  return
+                if(!renderType)
+                  res.locals.model[key] = data
+                  Render("models/instance",req,res)
+                if(renderType.toUpperCase() == "JSON")
+                    res.json(data)
+                if(renderType.toUpperCase() == "PATH")
+                  res.locals.model[key] = data
+                  Render(data.path,req,res)
+              return
+          req.flash 'info'
+          , req.i18n.t('ns.msg:flash.dberr')\
+          + "This method does not exist"
+          res.statusCode = 404
+          Render("models/instance",req,res)
 Route.model = Route.index
 module.exports = Route

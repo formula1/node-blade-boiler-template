@@ -6,9 +6,10 @@ function getUpdateForm(form_version, model, instance)
     -var mname = model.modelName
     -var pmn = model._getPrettyKey(model.modelName)
     -var dslug = model._getDocSlug()
+    -var url = locals.model.utils.object2URL(instance)
     div.createform
         h2= "Create "+pmn
-        form(id="create_"+mname, method='GET', action="/model/"+mname+'/create?_csrf='+csrf, role='form')
+        form(id="create_"+mname, method='GET', action=instance+"update?_csrf='+csrf, role='form')
         -if(form_version == "table")
             -for(var i in model.schema.paths)
                 -if(!i.match("^_"))

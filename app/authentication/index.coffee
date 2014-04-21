@@ -1,6 +1,8 @@
 fs = require("fs")
 passport = require "passport"
 User = require("../models/user/user")
+utils = require "../controllers/model/utils.coffee"
+mongoose = require "mongoose"
 
 providers = {}
 possprov = fs.readdirSync process.cwd()+"/app/authentication"
@@ -18,6 +20,16 @@ for name in possprov
 
 
 module.exports = 
+  middleware: (req,res,next)->
+    res.locals.model = {utils:utils}
+    if(req.user)
+      req.user.__getAssociated req,(user)->
+        if(user.tandc)
+          res.locals.tandc = {path:user.tandc}
+        next()
+    else
+      next()
+
   passport: ()->
     config = require "../config/config"
     config.setEnvironment process.env.NODE_ENV
@@ -58,24 +70,73 @@ module.exports =
       passport.use(value.strategy(url))
       
   routes: (app)->
+    app.all "/authenticate/tandc", (req,res,next)->
+      if(!req.user)
+        res.statusCode = 404
+        res.redirect "/"
+        return
+      else
+        req.user.__getAssociated req,(user)->
+          if(user.tandc)
+            res.statusCode = 201
+            res.locals.user = user
+            res.locals.tandc.model = user.tandc_model
+            res.locals.tandc.path = user.tandc
+            res.locals.csrf = req.csrfToken()
+            res.locals.model= {utils:utils}
+            res.render "models/terms_and_conditions.blade"
+            return
+          req.flash('info', "You have Accepted all Terms and Conditions")
+          res.redirect "/"
+    app.post "/authenticate/tandc/:model", (req,res,next)->
+      if(!req.user)
+        res.statusCode = 404
+        res.redirect "/"
+        return
+      model = mongoose.model(req.params.model)
+      if(!model)
+        res.statusCode = 404
+        res.redirect "/"
+        return
+      if(!req.body || !req.body.accept)
+        req.flash('info', "To get Further Functionality with "+\
+        model._getPrettyKey(model.modelName)+" you must accept "+\
+        "the Terms and Conditions for it")
+        res.redirect "/authenticate/tandc"
+      else
+        instance = new model({user:req.user._id})
+        instance.save (err, instance)->
+          if(err)
+            console.log("db error"+JSON.stringify(err))
+            req.flash('info', JSON.stringify(err))
+            res.redirect "/authenticate/tandc"
+            return
+          req.user.__getAssociated req,(user)->
+            if(user.tandc)
+              res.statusCode = 201
+              res.redirect "authentication/tandc"
+              return
+            req.flash('info', "You have Accepted all Terms and Conditions")
+            res.redirect "/"
     app.all "/authenticate/:method", (req, res, next)->
       if(req.isAuthenticated())
         req.flash('info', req.i18n.t('ns.msg:flash.alreadyauthorized'))
         res.redirect "index"
         return
-      if(typeof providers[req.params.method] == "undefined")
+      if(!providers.hasOwnProperty(req.params.method))
         req.flash('info', req.i18n.t('this method of authorization isn\'t Accepted'))
         res.redirect "index"
         return
-      if(typeof providers[req.params.method].loginCallback == "undefined")
+      if(!providers[req.params.method].hasOwnProperty("loginCallback"))
         passport.authenticate(req.params.method, { failureRedirect: "/" }) req,res,next
       else
-        passport.authenticate req.params.method, (err, user, info)->
+        passport.authenticate( req.params.method, (err, user, info)->
           if(err)
             console.log(3)
             next(err)
             return
           providers[req.params.method].loginCallback(req,res, user, info)
+        ) req, res, next
     app.all "/authenticate/:method/setup", (req, res, next)->
       if(typeof providers[req.params.method] == "undefined")
         req.flash('info', req.i18n.t('this method of authorization isn\'t Accepted'))
@@ -108,6 +169,11 @@ module.exports =
             unless err
               req.flash("info", req.i18n.t("ns.msg:flash." + info.message) + info.data + "
                 " + req.i18n.t("ns.msg:flash." + info.message2))
+              user.__getAssociated req,(user)->
+                if(user.tandc)
+                  res.statusCode = 201
+                  res.redirect "authentication/tandc"
+                  return
               res.statusCode = 201
               res.redirect "/"
             else

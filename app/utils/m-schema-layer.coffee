@@ -14,9 +14,13 @@ module.exports = (settings, overloads) ->
     if(overloads.associatedTo)
       if(typeof overloads.associatedTo == "string")
         assocTo = overloads.associatedTo
+        tdocSlug = mongoose.model(overloads.associatedTo)._getDocSlug()
+        console.log overloads
         if(assocTo == "user")
-          if(overloads.terms_and_conditions)
-            terms_and_conditions = overloads.terms_and_conditions
+          console.log("assoc to user")
+          console.log overloads
+          if(overloads.tandc)
+            terms_and_conditions = overloads.tandc
   
   if settings.alterPathValue
     tgetalter = setting.alterPathValue
@@ -45,16 +49,21 @@ module.exports = (settings, overloads) ->
     delete settings.docSlug
   else if(settings.hasOwnProperty("name"))
     tdocSlug = "name"
-  else
+  else if(!tdocSlug)
     throw new Error("need a docSlug Property")
   if settings.validateRequest
     tvalidateUser = settings.validateRequest
     delete settings.validateRequest
+
+  if(!settings[tdocSlug])
+    settings[tdocSlug] = {type:String,unique:true}
+
   ret = new Schema(settings)
   ret.static "_getDocSlug", ->
     tdocSlug
   if(terms_and_conditions)
-    ret.static "TandC", ()->
+    console.log("terms")
+    ret.static "_TandC", ()->
       return terms_and_conditions
 
   ret.method "_createHook", (req,res,next)->
@@ -73,6 +82,23 @@ module.exports = (settings, overloads) ->
 
   ret.static "_associatedTo", ()->
     return assocTo
+  if(assocTo != "" && typeof assocTo != "undefined")
+    ret.pre "save", (next)->
+      console.log("pre")
+      instance = this
+      imodel = this._getModel()
+      model = mongoose.model(imodel._associatedTo())
+      console.log("the model: "+this[model.modelName])
+      model.findOne {_id:this[model.modelName]}, (err, doc)->
+        if(err)
+          return next(err)
+        if(!doc)
+          return next("this doc does not exist")
+        console.log("my slug: "+imodel._getDocSlug())
+        console.log("its slug: "+model._getDocSlug())
+        instance[imodel._getDocSlug()] = doc[model._getDocSlug()]
+        next()
+       
   ret.static "autocomplete", (path,value,next)->
     search = {}
     ret_err = []

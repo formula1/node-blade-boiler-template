@@ -4,6 +4,7 @@ LocalStrategy = require('passport-local').Strategy
 Password = require('../models/user/password')
 User = require("../models/user/user")
 config = require "../config/config"
+utils = require "../controllers/model/utils.coffee"
 
 module.exports = 
   setup: (req, res, next)->
@@ -69,7 +70,7 @@ module.exports =
 
     delete req.body.remember_me
     console.log("server csrf: " +  req.csrfToken())
-    if req.body?
+    if req.body && req.body.email?
       req.body.email = req.body.email.toLowerCase()
       User.findOne { email:req.body.email }, (err,user) ->
         if err
@@ -99,7 +100,7 @@ module.exports =
                   SendMail(req, res, "activate", user)
         else
           #need to create user and create Password
-          user = new User(temp_info);
+          user = new User({email:req.body.email})
           user.save (err, user)->
             if(err)
               handleError("user save error", err)
@@ -118,18 +119,20 @@ module.exports =
 
   loginCallback: (req,res, user, info) ->
     if user
+      console.log("we got a user")
       req.logIn user, (err) ->
         unless err
-          req.flash('info', req.i18n.t('ns.msg:flash.' + info.message) + info.data + " " + req.i18n.t('ns.msg:flash.' + info.message2))
+          console.log("we're in")
+          req.flash('info', req.i18n.t('ns.msg:flash.' + info.message)\
+          + info.data + " " + req.i18n.t('ns.msg:flash.' + info.message2))
           res.statusCode = 201
-          res.redirect '/user/get'
-
+          res.redirect res.model.utils.object2URL(user)
         else
           console.log(5)
           console.log("inactiveuser")
           req.flash('info', req.i18n.t('ns.msg:flash.authorizationfailed'))
-          res.redirect "index"
           res.statusCode = 403
+          res.redirect "index"
     else
       console.log(4)
       req.flash('info', req.i18n.t('ns.msg:flash.' + info.message) + info.data + " " + req.i18n.t('ns.msg:flash.' + info.message2))
@@ -145,17 +148,36 @@ module.exports =
           password = new Password({user:user._id})
           password.save (err, password)->
             if(err)
+              console.log(err)
               next(err)
               return
             req.logIn user, (err) ->
               console.log('login err') if err
               next(err)  if err
+              console.log("loggedin")
               req.flash('info', 'Please change your Password')
-              res.redirect "user/"+user.slug+"/#password"
+              utils.getAssociatedInstances req, req.user, (found, unfound)->
+                for model of unfound
+                  if(unfound._TandC)
+                    res.statusCode = 201
+                    res.redirect "authentication/tandc"
+                    return
+                res.redirect utils.object2URL(user)
         else
           res.statusCode = 400
           req.flash('info', req.i18n.t('ns.msg:flash.alreadyactivated'))
-          res.redirect "user/"+user.slug+"/#password"
+          req.logIn user, (err) ->
+            console.log('login err') if err
+            next(err)  if err
+            console.log("loggedin")
+            req.flash('info', 'Please change your Password')
+            utils.getAssociatedInstances req, req.user, (found, unfound)->
+              for model of unfound
+                if(unfound._TandC)
+                  res.statusCode = 201
+                  res.redirect "authentication/tandc"
+                  return
+              res.redirect utils.object2URL(user)
       else if err is "token-expired-or-user-active"
         console.log "token-expired-or-user-active"
         res.statusCode = 403
@@ -172,28 +194,28 @@ module.exports =
       User.findOne email: email, (err, user) ->
         unless err
           if user
-            Password.findOne user: user._id, (error, password) ->
+            Password.findOne user: user._id, (error, password_ob) ->
               unless err
-                if password
-                  attempts = password._loginAttempts
+                if password_ob
+                  attempts = password_ob._loginAttempts
                   if ((5 - attempts) > 1)
                     remaining = "attemptsrem"
                   else
                     remaining = "attemptrem"
-                  if password.lockUntil < Date.now()
-                    password._comparePassword password, (err,isMatch)->
+                  if password_ob.lockUntil < Date.now()
+                    password_ob._comparePassword password, (err,isMatch)->
                       unless err
                         if isMatch
                           console.log "authorization success"
-                          password._resetLoginAttempts (cb) ->
+                          password_ob._resetLoginAttempts (cb) ->
                             done(null,user,
                               message: "authorizationsuccess"
                               data: "."
                               message2: "welcome")
                         else
-                          if password._loginAttempts < 5
+                          if password_ob._loginAttempts < 5
                             console.log "pass not match"
-                            password._incLoginAttempts (cb)->
+                            password_ob._incLoginAttempts (cb)->
                               done(null,false,
                                 message: "invalidpass",
                                 data: ". " + (5 - attempts),
@@ -205,9 +227,9 @@ module.exports =
                               message2: "wrongattempts")
                       else
                         console.log "pass not match"
-                        attempts = password._loginAttempts
-                        if password._loginAttempts < 5
-                          password._incLoginAttempts (cb)->
+                        attempts = password_ob._loginAttempts
+                        if password_ob._loginAttempts < 5
+                          password_ob._incLoginAttempts (cb)->
                             done(null,false,
                               message: "invalidpass",
                               data: ". " + (5 - attempts),
@@ -221,7 +243,7 @@ module.exports =
                       message2:"tryagainlater")
                 else
                   console.log "user has not setup password login"
-                  date = new Date(password.lockUntil)
+                  date = new Date(password_ob.lockUntil)
                   done("This User has not setup Login Password",false,
                     message: "",
                     data: ": " +  + ".",

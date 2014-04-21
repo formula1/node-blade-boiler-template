@@ -1,9 +1,15 @@
 mongoose = require "mongoose"
-
+fs = require "fs"
 module.exports = 
+  txt2HTML: (path)->
+    text = fs.readFileSync(process.cwd()+"/views/"+path, {encoding:"utf-8"})
+    text = text.replace(/\n|\r|\r\n/g, "<br/>")
+    text = text.replace(/\t/g, '<span style="display:inline-block;width:12.5%"></span>')
+    return text
   getAssociatedInstances: (req,instance, callback)->
     model_list = mongoose.modelNames()
     modelname = instance.constructor.modelName
+    console.log("modelname: "+modelname)
     associated_instances = []
     unfound_models = []
     assoc_model = ()->
@@ -37,9 +43,9 @@ module.exports =
   object2URL: (object)->
     if(object instanceof mongoose.Document)
       model = mongoose.model(object.constructor.modelName)
-      return "/model/"+model.modelName+"/"+object[model._getDocSlug()]+"/"
+      return "/"+model.modelName+"/"+object[model._getDocSlug()]+"/"
     else if(object.modelName)
-      return "/model/"+object.modelName
+      return "/"+object.modelName+"/"
   getArgs: (func)->
     fnStr = func.toString()
     fnStr = fnStr.replace(/\/\*.+?\*\/|\/\/.*(?=[\n\r])/g, '');

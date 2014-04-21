@@ -100,5 +100,61 @@ module.exports =
           next ret_err,
             params: topass
             docs: instances
-  update: ->
+  update: (req, res, instance, params, next) ->
+    utils.parse_params instance._getModel(), params, (err, topass) ->
+      model = instance._getModel()
+      ret_err = []
+      if err
+        ret_err.concat err
+        next ret_err, topass
+        return
+      find = {}
+      find[model._getDocSlug()] = instance[model._getDocSlug()]
+      model.findOne find, (err, instance) ->
+        if err
+          throw new Error(err)
+          ret_err.push err
+          next ret_err, topass
+          return
+        if(instance)
+          for key, value of topass
+            instance[key] = value
+          instance.save (err)->
+            if err
+              ret_err.push err
+              next ret_err, topass
+            else
+              ret_err = undefined
+              next ret_err, instance
+        else
+          ret_err.push "This document does not exist"
+          next ret_err, topass
   delete: ->
+  method: (req,res,doc, method,query, next)->
+    argsnames = utils.getArgs(doc[method])
+    argvalues = []
+    ret_err = []
+    for name in argsnames
+      if(query[name])
+        argvalues.push query[name]
+      else if(name.match(/req|request|res|response|next|cb|callback/))
+        continue
+      else
+        ret_err.push { message:"need all arguments for the method: "+method}
+        next ret_err, argvalues
+        return
+    if(argsnames[1].match(/res|response/))
+      argvalues.unshift res
+    if(argsnames[0].match(/req|request/))
+      argvalues.unshift req
+    if(argsnames[argsnames.length-1].match(/next|cb|callback/))
+      argvalues.push (errors, data, render)->
+        if(errors)
+          if(Object.prototype.toString.call( errors ) == '[object Array]')
+            ret_err.concat errors
+          else 
+            ret_err.push errors
+          next ret_err, argvalues, render
+          return
+        next(null,data, render)
+    doc[method].apply(doc, argvalues)

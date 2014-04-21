@@ -1,0 +1,14 @@
+include "../layout.blade"
+replace block page
+    -if(!locals.user.tandc)
+        h1 You have accepted all of the terms and conditions
+    -else
+        h1= "Terms and Conditions for "+locals.user.tandc_model[0].modelName
+        -var tandcHTML = locals.model.utils.txt2HTML(locals.user.tandc[0])
+        p(style="width:75%;margin-left:12.5%;")!= tandcHTML
+        form(method="POST", action="/authenticate/tandc/"+locals.user.tandc_model[0].modelName)
+            input(type='hidden', name='_csrf', value=locals.csrf)
+            label.checkbox
+                input(type="checkbox" name="accept")
+                I Accept the Terms and Conditions
+            input(type="submit")
