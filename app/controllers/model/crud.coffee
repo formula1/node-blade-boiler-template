@@ -101,15 +101,19 @@ module.exports =
             params: topass
             docs: instances
   update: (req, res, instance, params, next) ->
-    utils.parse_params instance._getModel(), params, (err, topass) ->
+    console.log("here")
+    utils.update_parse_params instance._getModel(), params, (err, topass) ->
+      console.log("topass:"+JSON.stringify(topass))
       model = instance._getModel()
       ret_err = []
       if err
+        console.log JSON.stringify(err)
         ret_err.concat err
         next ret_err, topass
         return
       find = {}
       find[model._getDocSlug()] = instance[model._getDocSlug()]
+      console.log(JSON.stringify(find))
       model.findOne find, (err, instance) ->
         if err
           throw new Error(err)
@@ -117,6 +121,7 @@ module.exports =
           next ret_err, topass
           return
         if(instance)
+          console.log("instance")
           for key, value of topass
             instance[key] = value
           instance.save (err)->

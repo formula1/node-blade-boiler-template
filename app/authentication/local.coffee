@@ -46,8 +46,6 @@ module.exports =
         data.link = config.APP.hostname + action + user.tokenString
       linkinfo = req.i18n.t('ns.msg:flash.activationlink') + "."
       options.from = {email:"samtobia@gmail.com"}
-
-
       console.log("sending message to: ", options.to.email)
       mailer = new Emailer(options, data)
       mailer.send (err,message)->
@@ -55,7 +53,6 @@ module.exports =
           res.statusCode = 201
           req.flash('info', linkinfo)
           res.redirect "index"
-
         else
           console.log err
           res.statusCode = 400
@@ -87,10 +84,10 @@ module.exports =
             if(password)
               if(password.active)
                 SendMail(req, res, "reset", user)
-                return
+                return next()
               else
                 SendMail(req, res, "activate", user)
-                return
+                return next()
             else
               password = new Password {user:user._id}
               password.save (err, password)->
@@ -119,25 +116,28 @@ module.exports =
 
   loginCallback: (req,res, user, info) ->
     if user
-      console.log("we got a user")
       req.logIn user, (err) ->
-        unless err
-          console.log("we're in")
-          req.flash('info', req.i18n.t('ns.msg:flash.' + info.message)\
-          + info.data + " " + req.i18n.t('ns.msg:flash.' + info.message2))
-          res.statusCode = 201
-          res.redirect res.model.utils.object2URL(user)
-        else
-          console.log(5)
+        if err
+          console.log(err)
           console.log("inactiveuser")
           req.flash('info', req.i18n.t('ns.msg:flash.authorizationfailed'))
           res.statusCode = 403
-          res.redirect "index"
+          res.redirect "/"
+          return
+        user.__getAssociated req,(user)->
+          if(user.tandc)
+            res.statusCode = 201
+            res.redirect "authenticate/tandc"
+            return
+          req.flash('info', req.i18n.t('ns.msg:flash.' + info.message)\
+          + info.data + " " + req.i18n.t('ns.msg:flash.' + info.message2))
+          res.statusCode = 201
+          res.redirect "/"
     else
       console.log(4)
       req.flash('info', req.i18n.t('ns.msg:flash.' + info.message) + info.data + " " + req.i18n.t('ns.msg:flash.' + info.message2))
       res.statusCode = 403
-      res.redirect "index"
+      res.redirect "/"
 
   tokenCallback: (req, res, next) ->
     User._activate req.params.tokenstring, (err, user) ->
@@ -208,7 +208,7 @@ module.exports =
                         if isMatch
                           console.log "authorization success"
                           password_ob._resetLoginAttempts (cb) ->
-                            done(null,user,
+                            done(undefined,user,
                               message: "authorizationsuccess"
                               data: "."
                               message2: "welcome")
@@ -226,7 +226,7 @@ module.exports =
                               data: attempts,
                               message2: "wrongattempts")
                       else
-                        console.log "pass not match"
+                        console.log "something else is wrong"
                         attempts = password_ob._loginAttempts
                         if password_ob._loginAttempts < 5
                           password_ob._incLoginAttempts (cb)->
@@ -236,7 +236,7 @@ module.exports =
                               message2: remaining )
                   else
                     console.log "user is locked"
-                    date = new Date(user.lockUntil)
+                    date = new Date(password_ob.lockUntil)
                     done(err,false,
                       message: "lockeduntil",
                       data: ": " + date + ".",

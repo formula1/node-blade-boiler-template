@@ -121,11 +121,11 @@ module.exports =
     app.all "/authenticate/:method", (req, res, next)->
       if(req.isAuthenticated())
         req.flash('info', req.i18n.t('ns.msg:flash.alreadyauthorized'))
-        res.redirect "index"
+        res.redirect "/"
         return
       if(!providers.hasOwnProperty(req.params.method))
         req.flash('info', req.i18n.t('this method of authorization isn\'t Accepted'))
-        res.redirect "index"
+        res.redirect "/"
         return
       if(!providers[req.params.method].hasOwnProperty("loginCallback"))
         passport.authenticate(req.params.method, { failureRedirect: "/" }) req,res,next
@@ -133,7 +133,8 @@ module.exports =
         passport.authenticate( req.params.method, (err, user, info)->
           if(err)
             console.log(3)
-            next(err)
+            req.flash('info', JSON.stringify(err))
+            res.redirect "/"
             return
           providers[req.params.method].loginCallback(req,res, user, info)
         ) req, res, next
@@ -141,28 +142,29 @@ module.exports =
       if(typeof providers[req.params.method] == "undefined")
         req.flash('info', req.i18n.t('this method of authorization isn\'t Accepted'))
         res.statuscode = 404
-        res.redirect "index"
+        res.redirect "/"
         return
       if(typeof providers[req.params.method].setup == "undefined")
         req.flash('info', req.i18n.t('this method of authorization isn\'t Accepted'))
         res.statuscode = 404
-        res.redirect "index"
+        res.redirect "/"
         return
       providers[req.params.method].setup req, res, next
     app.all "/authenticate/:method/callback", (req,res,next)->
       if(req.isAuthenticated())
         req.flash('info', req.i18n.t('ns.msg:flash.alreadyauthorized'))
-        res.redirect "index"
+        res.redirect "/"
         return
       if(typeof providers[req.params.method] == "undefined")
         req.flash('info', req.i18n.t('this method of authorization isn\'t Accepted'))
-        res.redirect "index"
+        res.redirect "/"
         return
       if(typeof providers[req.params.method].authCallback == "undefined" || \
       !providers[req.params.method].authCallback)
         res.redirect "404"
         return
       passport.authenticate( req.params.method, (err, user, info)->
+        console.log("should see this once")
         console.log err if err
         if user?
           req.logIn user, (err) ->
@@ -172,10 +174,10 @@ module.exports =
               user.__getAssociated req,(user)->
                 if(user.tandc)
                   res.statusCode = 201
-                  res.redirect "authentication/tandc"
+                  res.redirect "authenticate/tandc"
                   return
-              res.statusCode = 201
-              res.redirect "/"
+                res.statusCode = 201
+                res.redirect "/"
             else
               console.log("user login error: ", err)
               req.flash("info", req.i18n.t("ns.msg:flash.authorizationfailed"))
@@ -185,7 +187,7 @@ module.exports =
     app.all "/authenticate/:method/:tokenstring", (req,res,next)->
       if(req.isAuthenticated())
         req.flash('info', req.i18n.t('ns.msg:flash.alreadyauthorized'))
-        res.redirect "index"
+        res.redirect "/"
         return
       if(typeof providers[req.params.method] == "undefined")
         res.redirect "404"

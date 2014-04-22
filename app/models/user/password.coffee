@@ -24,7 +24,7 @@ password = rmv(
     type: String
     required: true
     default: base64url(crypto.randomBytes 48)
-  loginAttempts:
+  _loginAttempts:
     type: Number
     default: 0
   lockUntil:

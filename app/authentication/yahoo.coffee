@@ -7,6 +7,7 @@ module.exports =
     return new YahooStrategy
       returnURL: url + "/authenticate/yahoo/callback"
       realm: url
+      stateless: true
     , (identifier, profile, done) ->
       emails = []
       for mail in profile.emails

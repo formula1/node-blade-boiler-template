@@ -58,6 +58,22 @@ module.exports =
     mongoose.model(instance.constructor.modelName)
   string2Model: (name)->
     mongoose.model(name)
+  update_parse_params: ( model, params, next)->
+    #I should also make it validate path types
+    #or not at all, we will see...
+    schema = model.schema
+    required = schema.requiredPaths()
+    topass = {}
+    err = []
+    for key, value of schema.paths
+      if(key.match("^_|$_"))
+        continue
+      if(typeof params[key] != undefined && params[key] != "" && params[key] != null)
+        topass[key] = params[key]
+    if(err.length == 0)
+      err = undefined
+    process.nextTick ()->
+      next(err, topass)
   parse_params: ( model, params, next)->
     #I should also make it validate path types
     #or not at all, we will see...
@@ -66,7 +82,7 @@ module.exports =
     topass = {}
     err = []
     for key, value of schema.paths
-      if(key.match("^_"))
+      if(key.match("^_|$_"))
         continue
       if(typeof params[key] != undefined && params[key] != "" && params[key] != null)
         topass[key] = params[key]
