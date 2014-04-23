@@ -41,12 +41,24 @@ module.exports =
           assoc_model()
     assoc_model()
 
-  object2URL: (object)->
+  object2URL: (object, model, cb)->
     if(object instanceof mongoose.Document)
       model = mongoose.model(object.constructor.modelName)
       return "/"+model.modelName+"/"+object[model._getDocSlug()]+"/"
     else if(object.modelName)
       return "/"+object.modelName+"/"
+    else if(object instanceof mongoose.Types.ObjectId)
+      model = mongoose.model(model)
+      model.findOne {_id:object}, (err, doc)->
+        if(err)
+          console.log(err)
+          cb(err)
+          return
+        if(!doc)
+          console.log("No Document to turn to Url")
+          cb("No Document to turn to Url")
+          return
+        cb(undefined, "/"+model.modelName+"/"+doc[model._getDocSlug()]+"/")
   getArgs: (func)->
     fnStr = func.toString()
     fnStr = fnStr.replace(/\/\*.+?\*\/|\/\/.*(?=[\n\r])/g, '');

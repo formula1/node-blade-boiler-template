@@ -23,6 +23,8 @@ module.exports =
         region_populate()
     next(undefined, req,res)
   preRedirect: (req, res, next)->
+    if(!req.hasOwnProperty("user") || !req.user.associated.hasOwnProperty("company_id"))
+      return next(undefined, req,res)
     if(req.params.model == "company")
       console.log("we're in there"+JSON.stringify(req.params))
       for key, value of req.params
@@ -33,7 +35,13 @@ module.exports =
     if(req.params.model == "company_address")
       if(req.params.hasOwnProperty("method") && req.params.method == "create")
         req.flash("info", "You have setup your Company! now you may invite add users or more addresses")
-        res.plugin.redirect = "/company/"
+        utils.object2URL req.user.associated.company_id.company, "company", (err, url)->
+          if(err)
+            next(err, req, res)
+            return
+          res.plugin.redirect = url
+          next(undefined, req,res)
+        return
     next(undefined, req,res)
   preData: (req, res, next)->
     if(req.params.model != "company_address")
@@ -55,14 +63,14 @@ module.exports =
     console.log("Address Company: "+company)
     region = mongoose.model("company_region")
     country = query.country
-    region_names = 
-      2: query.region_0
-      1: query.region_1
-      0: query.region_2
+    region_names = [\
+      query.region_0
+      ,query.region_1
+      ,query.region_2]
     level = 0
     parent = undefined
     create_region = ()->
-      if(level > 2)
+      if(level >= region_names.length-1)
         console.log("Address Company: "+company)
         console.log("Address Region: "+parent)
         if(req.method.toUpperCase() == "GET")
@@ -72,9 +80,11 @@ module.exports =
           req.body.region = parent
           req.body.company = company
         next(undefined, req, res)
+        return
       params = {country:country,level:level}
       params.name = region_names[level]
-      if(params.name == "")
+      console.log("Region Name: "+params.name)
+      if(!params.hasOwnProperty("name") || params.name == "")
         level++
         process.nextTick ()->
           create_region()
