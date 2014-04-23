@@ -5,12 +5,12 @@ module.exports =
     utils.parse_params model, params, (err, topass) ->
       ret_err = []
       if err
+        console.log(JSON.stringify(err))
         ret_err.concat err
         next ret_err, topass
         return
       model.create topass, (err, instance) ->
         if err
-          throw new Error(err)
           ret_err.push err
           next ret_err, topass
           return
@@ -126,6 +126,7 @@ module.exports =
             instance[key] = value
           instance.save (err)->
             if err
+              console.log(JSON.stringify(err))
               ret_err.push err
               next ret_err, topass
             else

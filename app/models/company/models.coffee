@@ -130,13 +130,20 @@ sRegion = fOCSchema(
     required: true
   level:
     type: Number
-    required: true
+    required: (true)
+  country:
+    type: String
+    required: (true)
   parent:
     type: Schema.Types.ObjectId
     ref: "company_region"
     required: false
   children: [{type: Schema.Types.ObjectId, ref:"company_region"}]
   addresses: [{type: Schema.Types.ObjectId, ref:"company_address"}]
+  validateRequest: (req, mi, method, next) ->
+    if(!method || method.match("search"))
+      return next(true)
+    next(false)
 )
 sRegion.post 'save', (doc)->
   if(doc.parent != null)
@@ -175,18 +182,29 @@ sRegion.post 'remove', (doc)->
 scompanyCompany = fOCSchema(
   name:
     type: String
-    unique: true
-    required: true
+    unique: (true)
+    required: (true)
   url:
     type: String
-    required: false
+    required: (false)
   logo_url:
     type: String
-    required: false
+    required: (false)
   topic: {type:Schema.Types.ObjectId, ref: "company_topic", required:false}
   license: [{type: Schema.Types.ObjectId, ref:"company_license"}]
   addresses: [{type: Schema.Types.ObjectId, ref:"company_address"}]
   users: [{type: Schema.Types.ObjectId, ref: "company_id"}]
+  validateRequest: (req, mi, method, next) ->
+    if(!method || method.match("search"))
+      return next(true)
+    if(!req.user || !req.user.associated.hasOwnProperty("company_id"))
+      return next(false, "authenticate/tandc")
+    if(method.match("delete|update"))
+      if(req.user.associated.company_id.company == mi._id\
+      && req.user.associated.company_id.permission == "admin")
+        return next(true)
+      return next(false)
+    return next(true)
 )
 scompanyCompany.method "_createHook", (req, res, next)->
   the_company = this
@@ -236,26 +254,60 @@ scompanyCompany.post 'remove', (doc)->
           console.log("License could not update: "+err)
 
 sAddress = fOCSchema(
-  address: 
+  address:
     type: String
-    required: true
-  post_code: 
+    required: (true)
+  lat:
+    type: Number
+  long:
+    type: Number
+  post_code:
     type: String
-    required: true
+    required: (true)
   telephone_number:
     type: String
-    required:false
+    required:(false)
   fax_number:
     type: String
-    required: false
+    required: (false)
   email:
     type: String
-    required: false
+    required: (false)
   company: {type: Schema.Types.ObjectId, ref:"company", required: true}
   region: {type: Schema.Types.ObjectId, ref:"company_region", required: true}
   users: [{type: Schema.Types.ObjectId, ref:"company_id"}]
   docSlug: "address"
+  validateRequest: (req, mi, method, next) ->
+    if(!method || method.match("search"))
+      return next(true)
+    if(!req.user || !req.user.associated.hasOwnProperty("company_id"))
+      return next(false, "authenticate/tandc")
+    if(method.match("delete|update"))
+      if(req.user.associated.company_id.company != mi.company)
+        return next(false)
+      if(req.user.associated.company_id.permission == "admin")
+        return next(true)
+      if(req.user.associated.company_id.permission == "manager"\
+      && req.user.associated.company_id.address == mi._id)
+        return next(true)
+    return next(true)
 )
+sAddress.method "_createHook", (req, res, next)->
+  the_add = this
+  User.findOne {user:req.user._id}, (err, company_id)->
+    if(err)
+      console.log(err)
+      next(err)
+    else if(!company_id)
+      console.log("could not find this user")
+      next("could not find this user")
+    else
+      company_id.address = the_add._id
+      company_id.save (err)->
+        if(err)
+          next(err)
+        next()
+
 sAddress.post 'save', (doc)->
   companyCompany.update { _id: doc.company }
   ,{ $addToSet: { addresses: doc._id } }
@@ -294,19 +346,39 @@ sUser = fOCSchema(
   company:
     type: Schema.Types.ObjectId
     ref: "company"
-    required: false
+    required: (false)
   address:
     type: Schema.Types.ObjectId
     ref: "company_address"
-    required: false
+    required: (false)
   user:
     type: Schema.Types.ObjectId
     ref: "user"
-    required: true
-    unique: true
+    required: (true)
+    unique: (true)
   activated:
     type:Boolean
     default:(false)
+  validateRequest: (req, mi, method, next) ->
+    if(!method || method.match("search"))
+      return next(true)
+    if(method.match("create"))
+      return next(false)
+    if(!req.user || !req.user.associated.hasOwnProperty("company_id"))
+      console.log("no cid")
+      return next(false, "authenticate/tandc")
+    if(method.match("delete|update"))
+      if(req.user.associated.company_id.company == mi.company)
+        if(req.user.associated.company_id.permission == "admin")
+          return next(true)
+        if(req.user.associated.company_id.permission == "manager"\
+        && req.user.associated.company_id.address == mi.address)
+          return next(true)
+        if(req.user.associated.company_id.permission == "member"\
+        && req.user.associated.company_id._id == mi._id)
+          return next(true)
+      return next(false)
+    next(true)
 ,
   associatedTo: "user"
   tandc: "tandc/lorem.txt"

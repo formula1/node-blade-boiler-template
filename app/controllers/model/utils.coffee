@@ -10,10 +10,11 @@ module.exports =
     model_list = mongoose.modelNames()
     modelname = instance.constructor.modelName
     console.log("modelname: "+modelname)
-    associated_instances = []
+    associated_instances = {}
     unfound_models = []
     assoc_model = ()->
       if(model_list.length == 0)
+        console.log("ASSOCIATED: "+JSON.stringify(associated_instances))
         callback(associated_instances, unfound_models)
         return
       else 
@@ -22,14 +23,14 @@ module.exports =
           tofind = {}
           tofind[modelname] = instance._id
           cur_model.findOne(tofind)\
-          .populate("*").exec (err,doc)->
+          .populate({path:"*"}).exec (err,doc)->
             if(err)
               console.log(err)
               assoc_model()
             if(doc)
               cur_model._validateRequest req, doc, undefined, (boo)->
                 if(boo)
-                  associated_instances.push doc
+                  associated_instances[cur_model.modelName] = doc
                 assoc_model()
             else
               cur_model._validateRequest req, cur_model, undefined, (boo)->

@@ -3,6 +3,8 @@ passport = require "passport"
 User = require("../models/user/user")
 utils = require "../controllers/model/utils.coffee"
 mongoose = require "mongoose"
+plugins = require "../config/plugins.coffee"
+plugins.initiateFilter("finishTandC")
 
 providers = {}
 possprov = fs.readdirSync process.cwd()+"/app/authentication"
@@ -24,6 +26,7 @@ module.exports =
     res.locals.model = {utils:utils}
     if(req.user)
       req.user.__getAssociated req,(user)->
+        req.user = user
         if(user.tandc)
           res.locals.tandc = {path:user.tandc}
         next()
@@ -86,8 +89,13 @@ module.exports =
             res.locals.model= {utils:utils}
             res.render "models/terms_and_conditions.blade"
             return
-          req.flash('info', "You have Accepted all Terms and Conditions")
-          res.redirect "/"
+          console.log("emmitting")
+          plugins.emit "finishTandC", req, res, (err,req,res)->
+            req.flash('info', "You have Accepted all Terms and Conditions")
+            if(res.plugin.hasOwnProperty("redirect"))
+              res.redirect res.plugin.redirect
+            else
+              res.redirect "/"
     app.post "/authenticate/tandc/:model", (req,res,next)->
       if(!req.user)
         res.statusCode = 404
@@ -116,8 +124,14 @@ module.exports =
               res.statusCode = 201
               res.redirect "authentication/tandc"
               return
-            req.flash('info', "You have Accepted all Terms and Conditions")
-            res.redirect "/"
+            console.log("emmitting")
+            plugins.emit "finishTandC", req, res, (err,req,res)->
+              req.flash('info', "You have Accepted all Terms and Conditions")
+              if(res.plugin.hasOwnProperty("redirect"))
+                console.log(res.plugin.redirect)
+                res.redirect res.plugin.redirect
+              else
+                res.redirect "/"
     app.all "/authenticate/:method", (req, res, next)->
       if(req.isAuthenticated())
         req.flash('info', req.i18n.t('ns.msg:flash.alreadyauthorized'))

@@ -8,15 +8,19 @@ replace block page
     -var url = locals.model.utils.object2URL(doc)
     div.main_instance
         h1=title
-        div
-            form(action=url+"update")
-                -for(var i in model.schema.paths)
-                    -if(!i.match("^_"))
-                        div.input-prepend
-                            -var temptitle = model._getPrettyKey(i)
-                            span.add-on= temptitle
-                            call path2Input(model, model.schema.paths[i], doc[i])
-                input(type="submit")
+        -if(locals.model.inputRender)
+            include locals.model.inputRender
+        -else
+            div
+                form(action=url+"update" method="POST")
+                    input(type="hidden" name="_csrf" value=locals.csrf_token)
+                    -for(var i in model.schema.paths)
+                        -if(!i.match("^_"))
+                            div.input-prepend
+                                -var temptitle = model._getPrettyKey(i)
+                                span.add-on= temptitle
+                                call path2Input(model, model.schema.paths[i], doc[i])
+                    input(type="submit")
         -if(model.schema.methods.length > 0)
             div
                 h3 Instance Methods
@@ -24,16 +28,16 @@ replace block page
                 call sidebar(doc, model.schema.methods)
     -if(locals.model.instance.associated)
         div.assoc_docs
-            -console.log(locals.model.instance)
-            -for(var i=0;i<locals.model.instance.associated.length;i++)
-                -var doc = locals.model.instance.associated[i]
+            -for(var j in locals.model.instance.associated)
+                -var doc = locals.model.instance.associated[j]
                 -var model = doc._getModel()
                 -var dslug = model._getDocSlug()
                 -var title = doc[dslug]
                 -var url = locals.model.utils.object2URL(doc)
                 h1(id=model.modelName)=model.modelName+" "+title
                 div
-                    form(action=url+"update")
+                    form(action=url+"update" method="POST")
+                        input(type="hidden" name="_csrf" value=locals.csrf_token)
                         -for(var i in model.schema.paths)
                             -if(!i.match("^_"))
                                 div.input-prepend

@@ -81,6 +81,7 @@ UserSchema = rmv(
 # Bcrypt middleware
 UserSchema.pre "save", (next) ->
   user = this
+  console.log(user.groups)
 
   # Reset changepassword token.
   user.resetToken (err) ->

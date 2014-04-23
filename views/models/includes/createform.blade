@@ -1,26 +1,31 @@
 include "functions.blade"
-function getCreateForm(form_version, model)
-    -if(!model)
-        -var model = locals.model.model
-    -var csrf = encodeURIComponent(locals.csrf_token)
-    -var mname = model.modelName
-    -var pmn = model._getPrettyKey(model.modelName)
-    -var dslug = model._getDocSlug()
-    -var url = locals.model.utils.object2URL(model)
-    div.createform
-        h2= "Create "+pmn
-        form(id="create_"+mname, method='GET', action=url+'create?_csrf='+csrf, role='form')
-            -if(form_version == "table")
-                -for(var i in model.schema.paths)
-                    -if(!i.match("^_"))
-                        div.input-group
-                            -var temptitle = model._getPrettyKey(i)
-                            label.input-group-addon= temptitle
-                            call path2Input(model, model.schema.paths[i], "")
-                            -if(model.schema.paths[i].isRequired)
-                                span(style="color:#F00") Required
-                input(type="submit")
-            -else if(form_version == "inline")
-                p Inline
-            -else if(form_version == "horizontal")
-                p Horizontal
+-if(locals.model.inputRender)
+    -var ink = "includes/main-overrides/"+locals.model.inputRender
+    function getCreateForm(form_version, model)
+        include ink
+-else
+    function getCreateForm(form_version, model)
+        -if(!model)
+            -var model = locals.model.model
+        -var csrf = encodeURIComponent(locals.csrf_token)
+        -var mname = model.modelName
+        -var pmn = model._getPrettyKey(model.modelName)
+        -var dslug = model._getDocSlug()
+        -var url = locals.model.utils.object2URL(model)
+        div.createform
+            h2= "Create "+pmn
+            form(id="create_"+mname, method='GET', action=url+'create?_csrf='+csrf, role='form')
+                -if(form_version == "horizontal")
+                    -for(var i in model.schema.paths)
+                        -if(!i.match("^_"))
+                            div.input-group
+                                -var temptitle = model._getPrettyKey(i)
+                                label.input-group-addon= temptitle
+                                call path2Input(model, model.schema.paths[i], "")
+                                -if(model.schema.paths[i].isRequired)
+                                    span(style="color:#F00") Required
+                    input(type="submit")
+                -else if(form_version == "inline")
+                    p Inline
+                -else if(form_version == "table")
+                    p table

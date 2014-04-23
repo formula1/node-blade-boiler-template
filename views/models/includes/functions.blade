@@ -38,7 +38,7 @@ function addAutoCompleteId(model,unique,path,valued)
             $("[name=#{unique+pathname}]").typeahead({source:
             function(query, process){
             query = encodeURIComponent(query);
-            $.ajax("/model/#{childmodel.modelName}/autocomplete?path=#{docslug}&value="+query)
+            $.ajax("/#{childmodel.modelName}/autocomplete?path=#{docslug}&value="+query)
             .done(function(data){
             data_array = []
             for(var i in data)
@@ -71,7 +71,7 @@ function addAutoCompleteTag(model,unique,path,valued)
             source: function(query){
             query = encodeURIComponent(query);
             var array_def = $.Deferred();
-            $.ajax("/model/#{childmodel.modelName}/autocomplete?path=#{childmodel._getDocSlug()}&value="+query).done(function(data){
+            $.ajax("/#{childmodel.modelName}/autocomplete?path=#{childmodel._getDocSlug()}&value="+query).done(function(data){
             data_array = []
             for(var i in data){
             data_array.push( data[i].#{childmodel._getDocSlug()});
@@ -226,9 +226,12 @@ function path2Input(model, path, valued, unique)
         call addAutoCompleteId(model,unique,path,valued)
     -else if(pathval.instance == "String")
         -if(pathval.enumValues.length > 0)
-            select.form-control
+            select.form-control(name=unique+pathname)
                 -for(var j=0;j<pathval.enumValues.length;j++)
-                    option= pathval.enumValues[j]
+                    -if(valued == pathval.enumValues[j])
+                        option(selected="selected" value=pathval.enumValues[j])= pathval.enumValues[j]
+                    -else
+                        option(value=pathval.enumValues[j])= pathval.enumValues[j]
         -else if(pathval.regExp != null)
             div.form-group
                 input.form-control(type="text" name=unique+pathname, value=valued pattern=pathval.regExp)

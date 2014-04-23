@@ -75,7 +75,8 @@
     "express-device": ">=0.3.7",
     "i18next.gettext": "https://github.com/palamccc/i18next.gettext/archive/master.tar.gz",
     "lodash": "^2.4.1",
-    "cldr": "^2.1.6"
+    "cldr": "^2.1.6",
+    "mongoose-findorcreate": "^0.1.2"
   },
   "devDependencies": {
     "assert": "~1.1.1",

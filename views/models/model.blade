@@ -3,11 +3,14 @@ include "includes/functions.blade"
 replace block page
     -var model = locals.model.model
     h1=model.modelName
-    p= JSON.stringify(locals.model.model.schema.paths)
     div.row-fluid
         div.span8
+            h2= "Search for a "+model._getPrettyKey(model.modelName)
             include "includes/searchform.blade"
             call getSearchForm(model)
+            h2= "Or Create a "+model._getPrettyKey(model.modelName)
+            include "includes/createform.blade"
+            call getCreateForm("horizontal", model)
             -if(locals.model.instances.length == 0)
                 p Theres nothing available
             -else

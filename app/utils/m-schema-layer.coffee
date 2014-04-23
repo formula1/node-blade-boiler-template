@@ -66,6 +66,8 @@ module.exports = (settings, overloads) ->
     ret.static "_TandC", ()->
       return terms_and_conditions
 
+  ret.static "_RMV", true
+
   ret.method "_createHook", (req,res,next)->
     next()
   ret.static("_alterPathValue", tgetalter)
